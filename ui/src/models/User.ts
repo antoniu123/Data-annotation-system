@@ -1,0 +1,9 @@
+import { Roles } from "./Roles";
+
+export interface User {
+  id: number
+  username: string
+  email: string
+  password: string
+  roles: Roles[]
+}

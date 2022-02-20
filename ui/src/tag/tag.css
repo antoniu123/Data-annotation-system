@@ -1,0 +1,9 @@
+pointer {
+    position: 'absolute';
+    left: x;
+    top: y;
+    width: '5px';
+    height: '5px';
+    border-radius: '50%';
+    border: '3px solid #75BA9E';
+}

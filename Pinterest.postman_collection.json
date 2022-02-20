@@ -1,0 +1,225 @@
+{
+	"info": {
+		"_postman_id": "c8d52932-c774-4bcc-aa1d-699276f5e3ea",
+		"name": "Pinterest",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Signup",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"b\",\n    \"email\": \"test1\",\n    \"password\": \"test1test1\",\n    \"role\": [\"ROLE_USER\"]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signup",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signup"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Signin",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer",
+						"type": "text",
+						"disabled": true
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"username\": \"bobby\",\n    \"password\": \"bobby1\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/auth/signin",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"auth",
+						"signin"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Document By Id",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "http://localhost:8080/document/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"document",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Document",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib2JieSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTYzODM1MzQ1NSwiZXhwIjoxNjM4MzU0MDU1fQ.t6KZwbdCmuw4XtFqenfvtgnWj8xU68r6QkfVqdRNqZ418CuVcsWcHoCfkH5OaOgLo8guyt0tzmuSjDDxRMjraw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/home/bogdan/Pictures/daylight-forest-hd-wallpaper-443446.jpg"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://localhost:8080/upload?name=Mountain",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"upload"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "Mountain"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Download Document",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib2JieSIsInJvbGVzIjoiUk9MRV9BRE1JTixST0xFX1VTRVIiLCJpYXQiOjE2Mzc5MzA0MTcsImV4cCI6MTYzNzkzMTAxN30.1n_hJN91CTyDeXSL17xVgh9MT_wUSGOs5cthEeJjS_-9L4F-km_jHdH_7DRYGugO2_3ttf6S_oAHqlLyfqPqrQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Bearer eyJhbGciOiJIUzM4NCJ9.eyJzdWIiOiJib2JieSIsImlhdCI6MTYzNTYwNzc2NCwiZXhwIjoxNjM1Njk0MTY0fQ.CSp6jZThZv6MjJII4Ix54u2q7rDBUrvUBaXTsAnPiy1ovfidQZQ8l73cwP7h1UBN",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://localhost:8080/download/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"download",
+						"1"
+					],
+					"query": [
+						{
+							"key": "Authorization",
+							"value": "Bearer eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib2JieSIsInJvbGVzIjoiUk9MRV9VU0VSLFJPTEVfQURNSU4iLCJpYXQiOjE2MzU5Mjc0NTksImV4cCI6MTYzNjAxMzg1OX0.NyCf0A02v5By_VFvfQ-V5Vsq5CNJdxKVpDrEev_njUUu57gmWG04bHWZrGlNepmmsygqJY8FpS2bZEYi02E8KA",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Documents By User Id",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJib2JieSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTYzODI4NzYwNywiZXhwIjoxNjM4Mjg4MjA3fQ.50eR6FLxHEY2P5Qe8VJSFIXHgyYUBG6Y8koK39ao5cfFHgLcMkAF4MAH3jxfUEJaKnXrt90X-F2Z9qeDUo9xbw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/userId/3/documents",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"userId",
+						"3",
+						"documents"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
