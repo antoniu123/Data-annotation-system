@@ -1,4 +1,3 @@
-
 export interface ImageDetail {
   id: number
   name: string

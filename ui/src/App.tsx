@@ -11,6 +11,7 @@ import { Footer } from 'antd/lib/layout/layout';
 import Navbar from './shared/Navbar';
 import Dashboard from './pages/Dashboard';
 import FileUpload from './shared/FileUpload';
+import Projects from "./pages/Projects";
 
 const { Header, Content } = Layout
 
@@ -18,7 +19,8 @@ const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
 
 interface UserContextInterface {
   userId: number,
-  email: string
+  email: string,
+  username: string
 }
 
 export const UserContext = React.createContext<UserContextInterface | null>(null);
@@ -400,7 +402,8 @@ const App: React.VFC = () => {
       <Match on={['loginSuccess']} state={authState}>
         <UserContext.Provider value={
                                      {userId: authState.context.authResult?.jti ? authState.context.authResult?.jti : 0, 
-                                      email: authState.context.authResult?.iss ? authState.context.authResult?.iss : ""
+                                      email: authState.context.authResult?.iss ? authState.context.authResult?.iss : "",
+                                      username: authState.context.authResult?.sub? authState.context.authResult?.sub:""
                                      }
                                     }>
           <Header>
@@ -418,8 +421,8 @@ const App: React.VFC = () => {
               <Switch>
                 <Route path={'/'} exact component={() => <Home />} />
                 <Route path={'/dashboard'} exact component={() => <Dashboard/>} />
-                {/* <Route path={'/projects'} exact component={() => <Projects />} />
-                <Route path={'/tasks'} exact component={() => <Tasks />} /> */}
+                <Route path={'/projects'} exact component={() => <Projects />} />
+                {/*<Route path={'/tasks'} exact component={() => <Tasks />} />*/}
                 <Route path={'/upload'} exact component={() => <FileUpload initialState={"fillName"} initialErrorMessage={""}/>} /> 
                 <Route path={'/about'} exact component={() => <About />} />  
               </Switch>

@@ -50,7 +50,7 @@ const Dashboard: React.VFC = () => {
         <div>
           {documentState.context.documents.length === 0 && (
             <div className="text-center">
-              <h2>No trip found at the moment</h2>
+              <h2>No documents found at the moment</h2>
             </div>
           )}
          
@@ -121,7 +121,7 @@ const Dashboard: React.VFC = () => {
       <Match on={['rejected']} state={documentState}>
         <Result
           status="error"
-          title="Loading tripsdata failed"
+          title="Loading data failed"
           subTitle="Please try again. If Problem persis contact administrator"
           extra={
             <Button
@@ -134,7 +134,7 @@ const Dashboard: React.VFC = () => {
               Retry
             </Button>
           }
-        ></Result>
+        />
       </Match>
     </>
   )

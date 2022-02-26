@@ -1,10 +1,5 @@
 package com.example.demo.controller;
 
-import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.Set;
-import javax.validation.Valid;
-
 import com.example.demo.dto.JwtResponseDto;
 import com.example.demo.dto.LoginRequestDto;
 import com.example.demo.dto.MessageResponseDto;
@@ -12,13 +7,12 @@ import com.example.demo.dto.PasswordResponseDto;
 import com.example.demo.dto.RecoveryRequestDto;
 import com.example.demo.dto.ReplacePasswordRequestDto;
 import com.example.demo.dto.SignupRequestDto;
+import com.example.demo.model.ApplicationUser;
 import com.example.demo.model.DocumentRole;
 import com.example.demo.model.Role;
-import com.example.demo.model.ApplicationUser;
-import com.example.demo.repository.RoleRepository;
 import com.example.demo.repository.ApplicationUserRepository;
+import com.example.demo.repository.RoleRepository;
 import com.example.demo.security.JwtService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,7 +29,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+import javax.validation.Valid;
+import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
+import java.util.Set;
+
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

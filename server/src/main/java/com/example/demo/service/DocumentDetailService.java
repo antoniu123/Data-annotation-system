@@ -1,18 +1,17 @@
 package com.example.demo.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.example.demo.dto.ImageDetailDto;
 import com.example.demo.model.DetailStatus;
 import com.example.demo.model.Document;
 import com.example.demo.model.DocumentDetail;
 import com.example.demo.repository.DetailStatusRepository;
 import com.example.demo.repository.DocumentDetailRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class DocumentDetailService {

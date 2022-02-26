@@ -20,22 +20,7 @@ const UserMenu: React.VFC<UserMenuProps> = ({roles, logOut, changePassword}) => 
         <div className="block text-gray-900 transition-colors duration-100 rounded text-normal hover:bg-purple-500 hover:text-white">  
             <div>
                 <Menu className="font-bold">
-                    <Menu.Item key="1">
-                       <a href="/dashboard">    
-                            My Dashboard
-                       </a> 
-                    </Menu.Item>
-                    <Menu.Item key="2"> 
-                       <a href="/tasks">                       
-                            My Tasks
-                       </a>  
-                    </Menu.Item>
-                    <Menu.Item key="3">
-                        <a href="/projects">   
-                            My Projects
-                        </a> 
-                    </Menu.Item>
-                    <Menu.Item key="4" danger onClick={changePassword}>
+                    <Menu.Item key="1" danger onClick={changePassword}>
                         Change Password
                     </Menu.Item>
                 </Menu> 

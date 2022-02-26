@@ -1,18 +1,11 @@
 package com.example.demo.controller;
 
-import java.io.IOException;
-import java.sql.SQLException;
-import java.util.List;
-
-import javax.sql.rowset.serial.SerialException;
-
 import com.example.demo.dto.DocumentDto;
 import com.example.demo.dto.ImageDetailDto;
 import com.example.demo.model.Document;
 import com.example.demo.service.DocumentDetailService;
 import com.example.demo.service.DocumentService;
 import com.example.demo.service.VideoStreamService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
 import org.springframework.http.HttpHeaders;
@@ -33,7 +26,12 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+import javax.sql.rowset.serial.SerialException;
+import java.io.IOException;
+import java.sql.SQLException;
+import java.util.List;
+
+@CrossOrigin(origins = "*")
 @Controller
 public class DocumentController {
 
@@ -53,7 +51,7 @@ public class DocumentController {
     }
 
     @PostMapping(value = "/upload", produces = "application/json", consumes = "multipart/form-data")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<String> uploadImage(@RequestPart("file") MultipartFile file,
             @RequestParam("name") String name)
             throws SerialException, SQLException, IOException {
@@ -88,8 +86,8 @@ public class DocumentController {
     }
 
     @GetMapping(value = "/userId/{userId}/documents")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<List<DocumentDto>> getMyDocumentList(@PathVariable Long userId) throws SQLException {
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    public ResponseEntity<List<DocumentDto>> getMyDocumentList(@PathVariable Long userId) {
         return ResponseEntity.ok().body(imageService.getDocumentListByUser(userId));
     }
 

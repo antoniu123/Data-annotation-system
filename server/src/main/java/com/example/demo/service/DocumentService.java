@@ -1,5 +1,18 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.DocumentDto;
+import com.example.demo.model.ApplicationUser;
+import com.example.demo.model.Document;
+import com.example.demo.repository.ApplicationUserRepository;
+import com.example.demo.repository.DocumentRepository;
+import com.example.demo.util.Util;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.sql.Blob;
@@ -8,22 +21,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-import javax.sql.rowset.serial.SerialException;
-
-import com.example.demo.dto.DocumentDto;
-import com.example.demo.model.ApplicationUser;
-import com.example.demo.model.Document;
-import com.example.demo.repository.ApplicationUserRepository;
-import com.example.demo.repository.DocumentRepository;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 @Service
 public class DocumentService {
 
@@ -31,11 +28,14 @@ public class DocumentService {
 
     private ApplicationUserRepository applicationUserRepository;
 
+    private Util util;
+
     @Autowired
     public DocumentService(final DocumentRepository imageRepository,
-            final ApplicationUserRepository applicationUserRepository) {
+                           final ApplicationUserRepository applicationUserRepository, Util util) {
         this.imageRepository = imageRepository;
         this.applicationUserRepository = applicationUserRepository;
+        this.util = util;
     }
 
     @Transactional
@@ -44,15 +44,7 @@ public class DocumentService {
         Blob contents = new javax.sql.rowset.serial.SerialBlob(file.getBytes());
         String documentType = file.getContentType();
         String fileName = removePathFromName(Objects.requireNonNull(file.getOriginalFilename()));
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username;
-        if (principal instanceof UserDetails) {
-            username = ((UserDetails) principal).getUsername();
-        } else {
-            username = principal.toString();
-        }
-        final ApplicationUser applicationUser = applicationUserRepository.findByUsername(username)
-                .orElseGet(ApplicationUser::new);
+        final ApplicationUser applicationUser = util.getApplicationUser();
         final Document image = new Document(null, name, documentType, fileName, contents, applicationUser);
         return imageRepository.save(image);
     }
@@ -76,7 +68,7 @@ public class DocumentService {
         return Pair.of(textFile.getName(), new String(bdata, StandardCharsets.UTF_8));
     }
 
-    public List<DocumentDto> getDocumentListByUser(Long userId) throws SQLException {
+    public List<DocumentDto> getDocumentListByUser(Long userId){
         return imageRepository.findAllByUser(applicationUserRepository.getById(userId)).stream()
                 .map(doc -> new DocumentDto(doc.getId(), doc.getName(), doc.getDocumentType(),
                         doc.getFileName()))

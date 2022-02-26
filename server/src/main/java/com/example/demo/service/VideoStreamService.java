@@ -1,5 +1,7 @@
 package com.example.demo.service;
 
+import com.example.demo.model.Document;
+import com.example.demo.repository.DocumentRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +14,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.SQLException;
-
-import com.example.demo.model.Document;
-import com.example.demo.repository.DocumentRepository;
 
 @Service
 public class VideoStreamService {

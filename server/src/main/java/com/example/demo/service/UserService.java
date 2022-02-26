@@ -2,7 +2,6 @@ package com.example.demo.service;
 
 import com.example.demo.model.ApplicationUser;
 import com.example.demo.repository.ApplicationUserRepository;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
