@@ -67,13 +67,38 @@
     background-color: rgb(236, 229, 229);
     color: rgb(4, 4, 15);
     border-radius: 5px;
-    padding: 5px;
+    padding: 0px;
     opacity: 0.5;
-    width: '3px';
-    height: '3px';
+    width: '1px';
+    height: '1px';
     border-radius: '50%';
     border: '5px solid #75BA9E';
     position: absolute;
-    top: -16px;
-    font-size: 12px;
+    top: 0px;
+    font-size: 10px;
+  }
+
+  .ant-layout {
+    display: flex;
+    flex: auto;
+    flex-direction: unset;
+    min-height: 0;
+    background: #f0f2f5;
+  }
+  
+  .ant-modal-content {
+    border-radius: 20px;
+    background: rgb(196, 205, 241);
+  }
+
+  .ant-modal-body {
+    padding: 0px;
+  }
+  
+  .ant-modal-header {
+    background: rgb(44, 79, 235);
+  }
+  
+  .ant-modal-title {
+    color: rgb(233, 222, 222)
   }

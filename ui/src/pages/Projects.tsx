@@ -2,19 +2,20 @@ import {assign, Machine} from "xstate";
 import {Project} from "../models/Project"
 import axios from "axios";
 import {ProjectDetail} from "../models/ProjectDetail";
-import {Alert, Button, Form, Input, Modal, Result, Select, Spin, Table} from "antd";
+import {Alert, Button, Card, Col, Form, Input, Modal, Result, Row, Spin, Table} from "antd";
 import Match from "../shared/Match";
 import * as React from "react";
+import {useState} from "react";
 import {LoadingOutlined} from "@ant-design/icons";
 import {useMachine} from "@xstate/react";
 import {UserContext} from "../App";
 import {ColumnProps} from "antd/es/table";
 import ImageCard from "../shared/ImageCard";
 import {Document as File} from "../models/Document"
+import DocumentImport from "./DocumentImport";
+import {url} from "../tag/url";
+import PickDocument from "./PickDocument";
 
-const url = (id: number): string => {
-    return `http://${process.env.REACT_APP_SERVER_NAME}/document/` + id
-}
 
 const filterData = (data?: Array<Project>) => (formatter: any) => {
     if (!data || !Array.isArray(data)) {
@@ -45,6 +46,8 @@ const Projects: React.VFC = () => {
     }
     const [formProject] = Form.useForm()
     const [formProjectDetails] = Form.useForm()
+    const [showUpload, setShowUpload] = useState(false)
+    const [documentId, setDocumentId] = useState(0)
 
     const columns: ColumnProps<Project>[] = [
         {
@@ -73,7 +76,7 @@ const Projects: React.VFC = () => {
         },
         {
             title: 'Owner',
-            dataIndex: ['owner','username'],
+            dataIndex: ['owner', 'username'],
             key: 'owner',
             sorter: (a: Project, b: Project) => a.ownerUsername.localeCompare(b.ownerUsername),
             filters: filterData(projectState.context.projects)((s: Project) => s.ownerUsername),
@@ -151,12 +154,38 @@ const Projects: React.VFC = () => {
                     }
                 }> Edit Project Detail</Button>
             )
+        },
+        {
+            title: 'Export',
+            key: 'export',
+            render: (record: ProjectDetail) => (
+                <Button type="primary" onClick={
+                    () => {
+                        send({
+                            type: 'EXPORT', payload: {documentId: record.document.id}
+                        })
+                    }
+                }> Export</Button>
+            )
+        },
+        {
+            title: 'Import',
+            key: 'import',
+            render: (record: ProjectDetail) => (
+                <Button type="primary" onClick={
+                    () => {
+                        setDocumentId(record.document.id)
+                        setShowUpload(true)
+                        refresh()
+                    }
+                }> Import</Button>
+            )
         }
     ]
 
     return (
         <>
-            <Match on={['loading', 'savingProject', 'savingProjectDetail']} state={projectState}>
+            <Match on={['loading', 'savingProject', 'savingProjectDetail', 'exporting', 'savingDoc']} state={projectState}>
                 <Spin indicator={antIcon} tip="Loading...">
                     <Alert message="Please wait" type="info"/>
                 </Spin>
@@ -205,128 +234,187 @@ const Projects: React.VFC = () => {
 
                                columns={columns} size="small"/>
                     </div>
+                    {showUpload && (<DocumentImport documentId={documentId}
+                                                    initialErrorMessage='' close={() => setShowUpload(false)}/>)}
                 </>
             </Match>
 
             <Match on={['addEditProject']} state={projectState}>
-                <Modal visible={true} title={projectState.context.currentProject ? projectState.context.currentProject.name : ''}
+                <Modal visible={true}
+                       title={projectState.context.currentProject ? projectState.context.currentProject.name : ''}
                        maskClosable={false} footer={null}
-                       onCancel={()=>{
+                       onCancel={() => {
                            send({type: 'CANCEL_ADD_EDIT'})
                        }}>
-                    <Form
-                        name="basic"
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 12 }}
-                        form={formProject}
-                    >
-                        <Form.Item
-                            name="id"
-                            hidden
-                            initialValue={projectState.context.currentProject ? projectState.context.currentProject.id : undefined}
+                    <div className="py-4">
+                        <Form
+                            name="basic"
+                            labelCol={{span: 8}}
+                            wrapperCol={{span: 12}}
+                            form={formProject}
                         >
-                            <Input />
-                        </Form.Item>
+                            <Form.Item
+                                name="id"
+                                hidden
+                                initialValue={projectState.context.currentProject ? projectState.context.currentProject.id : undefined}
+                            >
+                                <Input/>
+                            </Form.Item>
 
-                        <Form.Item
-                            label="Name"
-                            name="name"
-                            initialValue={projectState.context.currentProject ? projectState.context.currentProject.name : undefined}
-                            rules={[{ required: true, message: 'Please input name!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
+                            <Form.Item
+                                label="Name"
+                                name="name"
+                                initialValue={projectState.context.currentProject ? projectState.context.currentProject.name : undefined}
+                                rules={[{required: true, message: 'Please input name!'}]}
+                            >
+                                <Input/>
+                            </Form.Item>
 
-                        <Form.Item
-                            label="Description"
-                            name="description"
-                            initialValue={projectState.context.currentProject ? projectState.context.currentProject.description: undefined}
-                            rules={[{ required: true, message: 'Please input description!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
-                        <Button key="back" onClick={() => {
-                            send({
-                                type: 'CANCEL_ADD_EDIT'
-                            })}}>
-                            Cancel
-                        </Button>
-                        <Button key="submit" type="primary" onClick={() => {
-                            send({
-                                type: 'SAVE_PROJECT',payload: {
-                                       id: formProject.getFieldValue('id'),
-                                       name: formProject.getFieldValue('name'),
-                                       description: formProject.getFieldValue('description'),
-                                       ownerUsername: userContext && userContext.username ? userContext.username : ''
-                                    }
-                            })
-                            }}>
-                            Submit
-                        </Button>
-                    </Form>
+                            <Form.Item
+                                label="Description"
+                                name="description"
+                                initialValue={projectState.context.currentProject ? projectState.context.currentProject.description : undefined}
+                                rules={[{required: true, message: 'Please input description!'}]}
+                            >
+                                <Input/>
+                            </Form.Item>
+                            <div className="items-center">
+                                <Button key="back" onClick={() => {
+                                    send({
+                                        type: 'CANCEL_ADD_EDIT'
+                                    })
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button key="submit" type="primary" onClick={() => {
+                                    send({
+                                        type: 'SAVE_PROJECT', payload: {
+                                            id: formProject.getFieldValue('id'),
+                                            name: formProject.getFieldValue('name'),
+                                            description: formProject.getFieldValue('description'),
+                                            ownerUsername: userContext && userContext.username ? userContext.username : ''
+                                        }
+                                    })
+                                }}>
+                                    Submit
+                                </Button>
+                            </div>
+                        </Form>
+                    </div>
                 </Modal>
             </Match>
 
             <Match on={['addEditProjectDetail']} state={projectState}>
-                <Modal visible={true} maskClosable={false} footer={null}  onCancel={()=>{send({type: 'CANCEL_ADD_EDIT_DETAIL'})}}>
-                    <Form
-                        name="basic"
-                        labelCol={{ span: 8 }}
-                        wrapperCol={{ span: 12 }}
-                        form={formProjectDetails}
+                <Modal visible={true} maskClosable={false} footer={null} onCancel={() => {
+                    send({type: 'CANCEL_ADD_EDIT_DETAIL'})
+                }}>
+                    <div className="py-4">
 
-                    >
-
-                        <Form.Item
-                            label="#"
-                            hidden
-                            name="id"
-                            initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.id : undefined}
-                            rules={[{ required: true, message: 'Please input id!' }]}
+                        <Form
+                            name="basic"
+                            labelCol={{span: 8}}
+                            wrapperCol={{span: 12}}
+                            form={formProjectDetails}
                         >
-                            <Input />
-                        </Form.Item>
 
-                        <Form.Item
-                            label="Name"
-                            name="name"
-                            initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.name : undefined}
-                            rules={[{ required: true, message: 'Please input name!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
+                            <Form.Item
+                                label="#"
+                                hidden
+                                name="id"
+                                initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.id : undefined}
+                                rules={[{required: true, message: 'Please input id!'}]}
 
-                        <Form.Item
-                            label="Description"
-                            name="description"
-                            initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.description : undefined}
-                            rules={[{ required: true, message: 'Please input description!' }]}
-                        >
-                            <Input />
-                        </Form.Item>
+                            >
+                                <Input/>
+                            </Form.Item>
 
-                        <Button key="back" onClick={() => {
-                            send({
-                                type: 'CANCEL_ADD_EDIT_DETAIL'
-                            })}}>
-                            Cancel
-                        </Button>
-                        <Button key="submit" type="primary" onClick={() => {
-                            const docId = formProjectDetails.getFieldValue('documentId')
-                            const doc: File = {} as File
-                            send({
-                                type: 'SAVE_PROJECT_DETAIL',payload: {
-                                    id: formProjectDetails.getFieldValue('id'),
-                                    name: formProjectDetails.getFieldValue('name'),
-                                    description: formProjectDetails.getFieldValue('description'),
-                                    document: doc,
-                                    username: userContext && userContext.username ? userContext.username : ''
-                                }
-                            })}}>
-                            Submit
-                        </Button>
-                    </Form>
+                            <Form.Item
+                                label="Document"
+                                name="document"
+                                initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.document : undefined}
+                                rules={[{required: true, message: 'Please input document!'}]}
+                            >
+                                <Row justify="space-around" align="middle" gutter={[16, 16]}>
+                                    <Col span={12}>
+                                        <Card
+                                            hoverable
+                                            style={{ width: 120, height: 60 }}
+                                            cover={<img alt="example" src={
+                                                projectState.context.currentProjectDetail ?
+                                                url(projectState.context.currentProjectDetail.document.id) :
+                                                ''
+                                            } />}
+                                        >
+                                        </Card>
+                                    </Col>
+                                    <Col>
+                                        <Button key="addDoc" type="dashed" onClick={() => {
+                                            send({
+                                                type: 'ADD_DOC'
+                                            })
+                                        }}>
+                                            Add Document
+                                        </Button>
+                                    </Col>
+                                </Row>
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Name"
+                                name="name"
+                                initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.name : undefined}
+                                rules={[{required: true, message: 'Please input name!'}]}
+                            >
+                                <Input/>
+                            </Form.Item>
+
+                            <Form.Item
+                                label="Description"
+                                name="description"
+                                initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.description : undefined}
+                                rules={[{required: true, message: 'Please input description!'}]}
+                            >
+                                <Input/>
+                            </Form.Item>
+
+
+                            <Button key="back" onClick={() => {
+                                send({
+                                    type: 'CANCEL_ADD_EDIT_DETAIL'
+                                })
+                            }}>
+                                Cancel
+                            </Button>
+                            <Button key="submit" type="primary" onClick={() => {
+                                const docId = formProjectDetails.getFieldValue('documentId')
+                                const doc: File = {} as File
+                                send({
+                                    type: 'SAVE_PROJECT_DETAIL', payload: {
+                                        id: formProjectDetails.getFieldValue('id'),
+                                        name: formProjectDetails.getFieldValue('name'),
+                                        description: formProjectDetails.getFieldValue('description'),
+                                        document: doc,
+                                        username: userContext && userContext.username ? userContext.username : ''
+                                    }
+                                })
+                            }}>
+                                Submit
+                            </Button>
+
+                        </Form>
+                    </div>
                 </Modal>
+            </Match>
+
+            <Match on={['pickDocument']} state={projectState}>
+                <PickDocument
+                    documents = {projectState.context.documents}
+                    pick={(file: File) => send({
+                            type:"SAVE_DOC",
+                            payload: {document: file}
+                        })}
+                    close={()=> send({type: 'CANCEL_ADD_DOC'})}
+                />
             </Match>
 
             <Match on={['rejected']} state={projectState}>
@@ -357,6 +445,7 @@ interface ProjectMachineContext {
     documents: Array<File>
     currentProject?: Project
     currentProjectDetail?: ProjectDetail
+    documentToPickForDetail?: File
 }
 
 interface ProjectMachineSchema {
@@ -367,19 +456,26 @@ interface ProjectMachineSchema {
         addEditProject: {}
         savingProject: {}
         addEditProjectDetail: {}
+        pickDocument:{}
+        savingDoc:{}
         savingProjectDetail: {}
+        exporting: {}
         rejected: {}
     }
 }
 
 type ProjectMachineEvent =
     | { type: 'RETRY' }
-    | { type: 'ADD_EDIT_PROJECT'; payload: {project: Project | undefined}}
+    | { type: 'ADD_EDIT_PROJECT', payload: { project: Project | undefined } }
     | { type: 'CANCEL_ADD_EDIT' }
-    | { type: 'SAVE_PROJECT'; payload: {id: number, name: string, description: string, ownerUsername: string} }
-    | { type: 'ADD_EDIT_PROJECT_DETAIL'; payload: {projectDetail: ProjectDetail | undefined} }
+    | { type: 'SAVE_PROJECT', payload: { id: number, name: string, description: string, ownerUsername: string } }
+    | { type: 'ADD_EDIT_PROJECT_DETAIL', payload: { projectDetail: ProjectDetail | undefined } }
     | { type: 'CANCEL_ADD_EDIT_DETAIL' }
-    | { type: 'SAVE_PROJECT_DETAIL'; payload: { id: number, name: string, description: string, document:File, username:string} }
+    | { type: 'EXPORT', payload: { documentId: number } }
+    | { type: 'SAVE_PROJECT_DETAIL', payload: { id: number, name: string, description: string, document: File, username: string } }
+    | { type: 'CANCEL_ADD_DOC'}
+    | { type: 'ADD_DOC'}
+    | { type: 'SAVE_DOC' , payload: {document: File} }
 
 const createProjectMachine = (userId: number) =>
     Machine<ProjectMachineContext, ProjectMachineSchema, ProjectMachineEvent>(
@@ -408,7 +504,7 @@ const createProjectMachine = (userId: number) =>
                                     projects: event.data[0].data,
                                     documents: event.data[1].data,
                                     currentProject: undefined,
-                                    currentProjectDetail:undefined
+                                    currentProjectDetail: undefined
                                 }
                             })
                         },
@@ -427,6 +523,9 @@ const createProjectMachine = (userId: number) =>
                         },
                         ADD_EDIT_PROJECT_DETAIL: {
                             target: 'addEditProjectDetail'
+                        },
+                        EXPORT: {
+                            target: 'exporting'
                         }
                     }
                 },
@@ -436,12 +535,12 @@ const createProjectMachine = (userId: number) =>
                         CANCEL_ADD_EDIT: {
                             target: 'idle'
                         },
-                        SAVE_PROJECT:{
+                        SAVE_PROJECT: {
                             target: 'savingProject'
                         }
                     }
                 },
-                savingProject:{
+                savingProject: {
                     invoke: {
                         id: 'savingProject',
                         src: 'saveProject',
@@ -451,7 +550,7 @@ const createProjectMachine = (userId: number) =>
                                 return {
                                     ...context,
                                     currentProject: undefined,
-                                    currentProjectDetail:undefined
+                                    currentProjectDetail: undefined
                                 }
                             })
                         },
@@ -464,14 +563,31 @@ const createProjectMachine = (userId: number) =>
                     entry: 'assignCurrentProjectDetail',
                     on: {
                         CANCEL_ADD_EDIT_DETAIL: {
-                            target:'idle'
+                            target: 'idle'
                         },
-                        SAVE_PROJECT_DETAIL:{
-                            target:'savingProjectDetail'
+                        SAVE_PROJECT_DETAIL: {
+                            target: 'savingProjectDetail'
+                        },
+                        ADD_DOC:{
+                            target: 'pickDocument'
                         }
                     }
                 },
-                savingProjectDetail:{
+                pickDocument:{
+                    on:{
+                        CANCEL_ADD_DOC: {
+                            target:'addEditProjectDetail'
+                        },
+                        ADD_DOC: {
+                            target: 'savingDoc'
+                        },
+                    }
+                },
+                savingDoc: {
+                    entry: 'onOk',
+                    always: {target: 'addEditProjectDetail'}
+                },
+                savingProjectDetail: {
                     invoke: {
                         id: 'savingProjectDetail',
                         src: 'saveProjectDetail',
@@ -481,12 +597,24 @@ const createProjectMachine = (userId: number) =>
                                 return {
                                     ...context,
                                     currentProject: undefined,
-                                    currentProjectDetail:undefined
+                                    currentProjectDetail: undefined
                                 }
                             })
                         },
                         onError: {
                             target: 'addEditProjectDetail'
+                        }
+                    }
+                },
+                exporting: {
+                    invoke: {
+                        id: 'exporting',
+                        src: 'export',
+                        onDone: {
+                            target: 'loading',
+                        },
+                        onError: {
+                            target: 'idle'
                         }
                     }
                 },
@@ -500,9 +628,20 @@ const createProjectMachine = (userId: number) =>
             }
         },
         {
-            actions:{
-                assignCurrentProject: assign((context,event)=>{
-                    if (event.type === 'ADD_EDIT_PROJECT')  {
+            actions: {
+                onOk: assign((context, event) => {
+                    if (event.type === 'SAVE_DOC') {
+                        return {
+                            ...context,
+                            documentToPickForDetail: event.payload.document
+                        }
+                    }
+                    return {
+                        ...context
+                    }
+                }),
+                assignCurrentProject: assign((context, event) => {
+                    if (event.type === 'ADD_EDIT_PROJECT') {
                         return {
                             ...context,
                             currentProject: event.payload.project,
@@ -513,8 +652,8 @@ const createProjectMachine = (userId: number) =>
                         ...context
                     }
                 }),
-                assignCurrentProjectDetail: assign((context,event)=>{
-                    if (event.type === 'ADD_EDIT_PROJECT_DETAIL')  {
+                assignCurrentProjectDetail: assign((context, event) => {
+                    if (event.type === 'ADD_EDIT_PROJECT_DETAIL') {
                         return {
                             ...context,
                             currentProjectDetail: event.payload.projectDetail
@@ -526,20 +665,20 @@ const createProjectMachine = (userId: number) =>
                 })
             },
             services: {
-                loadData: (context,event)=> {
+                loadData: (context, event) => {
                     const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
                     const urlPro = `http://${process.env.REACT_APP_SERVER_NAME}/userId/${userId}/projects`
                     const urlDoc = `http://${process.env.REACT_APP_SERVER_NAME}/userId/${userId}/documents`
                     return Promise.all([
                         axios
-                            .get(urlPro, { headers: {"Authorization" : `Bearer ${token}`} })
+                            .get(urlPro, {headers: {"Authorization": `Bearer ${token}`}})
                             .then((ret) => Promise.resolve(ret)
                             )
                             .catch((err) => {
                                 return Promise.reject(err)
                             }),
                         axios
-                            .get(urlDoc, { headers: {"Authorization" : `Bearer ${token}`} })
+                            .get(urlDoc, {headers: {"Authorization": `Bearer ${token}`}})
                             .then((ret) => Promise.resolve(ret)
                             )
                             .catch((err) => {
@@ -557,7 +696,7 @@ const createProjectMachine = (userId: number) =>
                     }
                     const url = `http://${process.env.REACT_APP_SERVER_NAME}/userId/${userId}/project`
                     return async () => axios
-                        .post(url, body,{headers: {"Authorization": `Bearer ${token}`}})
+                        .post(url, body, {headers: {"Authorization": `Bearer ${token}`}})
                         .then((ret) => Promise.resolve(ret)
                         )
                         .catch((err) => {
@@ -581,6 +720,22 @@ const createProjectMachine = (userId: number) =>
                         .catch((err) => {
                             return Promise.reject(err)
                         })
+                },
+                export: async (context, event) => {
+                    const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
+                    let urlExport = ''
+                    if (event.type === 'EXPORT')
+                        urlExport = `http://${process.env.REACT_APP_SERVER_NAME}/document/${event.payload.documentId}/export`
+                    const response = await axios
+                        .get(urlExport, {headers: {"Authorization": `Bearer ${token}`, responseType: 'blob'}})
+                    const url = window.URL.createObjectURL(new Blob([response.data]));
+                    const link = document.createElement("a");
+                    link.href = url;
+                    const filename = response.headers["filename"];
+                    link.setAttribute("download", filename);
+                    link.click();
+                    return Promise.resolve(response)
+
                 }
             }
         }

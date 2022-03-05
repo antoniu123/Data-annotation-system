@@ -201,6 +201,7 @@ const createUploadMachine = (
       },
       states: {
         fillName: {
+          entry: assign({ percent: (_context,event) => 0}),
           on: {
             FILE_NAME_COMPLETED: {
               target: 'idle',
@@ -237,9 +238,9 @@ const createUploadMachine = (
           }
         },
         success: {
-          always: [
-            { target: 'fillName'}
-          ]
+          after: {
+            3000: { target: 'fillName' }
+          }
         },
         error: {
           always: [

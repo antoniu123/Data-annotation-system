@@ -56,3 +56,28 @@ table {
         transform: rotate(360deg);
     }
 }
+
+.ant-layout {
+    display: flex;
+    flex: auto;
+    flex-direction: unset;
+    min-height: 0;
+    background: #f0f2f5;
+}
+
+.ant-modal-content {
+    border-radius: 20px;
+    background: rgb(196, 205, 241);
+}
+
+.ant-modal-body {
+    padding: 0px;
+}
+
+.ant-modal-header {
+    background: rgb(44, 79, 235);
+}
+
+.ant-modal-title {
+    color: rgb(233, 222, 222)
+}

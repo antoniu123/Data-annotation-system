@@ -7,6 +7,7 @@ import ImageMarker, { Marker, MarkerComponentProps } from "react-image-marker"
 import { assign, Machine } from "xstate"
 import { ImageDetail } from "../models/ImageDetail"
 import Match from "./Match"
+import LineTo from 'react-lineto';
 
 
 // const formItemLayout = {
@@ -45,14 +46,15 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
     
     const CustomMarker = (props: MarkerComponentProps) => {
         return (
-            <p className="custom-marker">
-                {tagState.context.documentDetails[props.itemNumber as number] ? 
-                  tagState.context.documentDetails[props.itemNumber as number].name : props.itemNumber}
-            </p>
+            <div className={`${props.itemNumber} hover:`}>
+                *
+            </div>
+            // <p className={`custom-marker ${props.itemNumber}`}>
+            //     {tagState.context.documentDetails[props.itemNumber as number] ? 
+            //       tagState.context.documentDetails[props.itemNumber as number].name : props.itemNumber}
+            // </p>
         );
     };
-
-    const titleModal  = 'Image tag details for document ' + docId
 
     const putMarkers = () => {
         setMarkers(tagState.context.markers)
@@ -121,8 +123,8 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
             </Match>
 
             <Match on={['loadResolved']} state={tagState} >
-                <Modal visible={visible} onCancel={onClose} width={800} title={titleModal} footer={null}>
-                    <div onLoad={putMarkers}>
+                <Modal visible={visible} onCancel={onClose} width={800} title={null} footer={null}>
+                    <div className="abc" onLoad={putMarkers}>
                         <ImageMarker
                             src={urlImage}
                             markers={markers}
@@ -139,11 +141,22 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                             }}
                             markerComponent={CustomMarker}
                         />
+                        { markers.map((marker,index,array)=>(
+                            <>
+                               {index > 0 && (
+                                  <LineTo delay={500} borderColor="red" from={`${index-1}`} to={`${index}`} within="abc"/>
+                                )}
+                            </>
+                        ))
+                        }
+                        { markers.length > 2 && (
+                            <LineTo delay={500} borderColor="red" from="0" to={`${markers.length-1}`} within="abc"/>
+                        )}
                     </div>
                     <Modal visible={addEditVisible} onCancel={()=>setAddEditVisible(false)} 
                            width={600} title={"saving tag details ..."} 
                            closable={true} footer={null}>
-                        <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={onFinish} autoComplete="off">
+                        <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={onFinish}>                      
                             <b>Tag Items</b>
                             <br/>
                             <Form.List name="items" initialValue={newImageDetails}>
