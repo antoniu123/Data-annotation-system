@@ -1,5 +1,5 @@
 import { useMachine } from "@xstate/react"
-import { Alert, Button, Form, Input, Modal, Result, Space, Spin, Table } from "antd"
+import {Alert, Button, Card, Form, Input, Modal, Result, Space, Spin, Table} from "antd"
 import { ColumnProps } from "antd/lib/table"
 import axios from "axios"
 import { useState } from "react"
@@ -123,7 +123,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
             </Match>
 
             <Match on={['loadResolved']} state={tagState} >
-                <Modal visible={visible} onCancel={onClose} width={800} title={null} footer={null}>
+                <Modal className = "content-center" visible={visible} onCancel={onClose} width={800} title={null} footer={null}>
                     <div className="abc" onLoad={putMarkers}>
                         <ImageMarker
                             src={urlImage}
@@ -153,8 +153,8 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                             <LineTo delay={500} borderColor="red" from="0" to={`${markers.length-1}`} within="abc"/>
                         )}
                     </div>
-                    <Modal visible={addEditVisible} onCancel={()=>setAddEditVisible(false)} 
-                           width={600} title={"saving tag details ..."} 
+                    <Modal className = "flex justify-center" visible={addEditVisible} onCancel={()=>setAddEditVisible(false)}
+                           width={700} title={"saving tag details ..."}
                            closable={true} footer={null}>
                         <Form name="dynamic_form_item" {...formItemLayoutWithOutLabel} onFinish={onFinish}>                      
                             <b>Tag Items</b>
@@ -196,16 +196,19 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                             </Form.Item>
                         </Form>
                     </Modal>
-                    <p className={"center_text"}>These are our tag records data</p>
-                    <Button type="primary" onClick={
+                    <Card title="These are our tag records data" bordered={true}  style={{ width: '100%' }}
+                    actions = {[<Button type="primary" onClick={
                         () => {
                             setAddEditVisible(true)
                         }
                     } disabled={newImageDetails.length === 0}>Add
-                    </Button>
-                    { tagState.context.documentDetails.length > 0 ?
-                    <Table rowKey="id" dataSource={tagState.context.documentDetails} columns={columns} size="small"/> :
-                    null }
+                    </Button>]}>
+                        <>
+                            {tagState.context.documentDetails.length > 0 ?
+                            <Table rowKey="id" dataSource={tagState.context.documentDetails} columns={columns} size="small"/> :
+                            null }
+                        </>
+                    </Card>
                     {/* <AddEditTag key={documentDetailId}
                                   truckId={documentDetailId}
                                   visible={addEditVisible}

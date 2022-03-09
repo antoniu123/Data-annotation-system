@@ -1,20 +1,38 @@
 package com.example.demo.service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import com.example.demo.dto.ImageDetailDto;
+import com.example.demo.model.Detail;
 import com.example.demo.model.DetailStatus;
 import com.example.demo.model.Document;
 import com.example.demo.model.DocumentDetail;
+import com.example.demo.parser.CsvParser;
+import com.example.demo.parser.model.ImportRecordDocumentDetail;
+import com.example.demo.repository.DetailRepository;
 import com.example.demo.repository.DetailStatusRepository;
 import com.example.demo.repository.DocumentDetailRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class DocumentDetailService {
+
+        private static final Long DETAIL_STATUS_VALIDATED = 2L;
 
         private final DocumentService documentService;
 
@@ -24,15 +42,23 @@ public class DocumentDetailService {
 
         private final UserService userService;
 
+        private final CsvParser csvParser;
+
+        private final DetailRepository detailRepository;
+
         @Autowired
         public DocumentDetailService(final DocumentService documentService,
                         final DetailStatusRepository detailStatusRepository,
                         final DocumentDetailRepository documentDetailRepository,
-                        final UserService userService) {
+                        final DetailRepository detailRepository,
+                        final UserService userService,
+                        final CsvParser csvParser) {
                 this.documentService = documentService;
                 this.detailStatusRepository = detailStatusRepository;
                 this.documentDetailRepository = documentDetailRepository;
+                this.detailRepository = detailRepository;
                 this.userService = userService;
+                this.csvParser = csvParser;
         }
 
         public List<ImageDetailDto> getAllDetailForDocument(final Long documentId) {
@@ -103,4 +129,65 @@ public class DocumentDetailService {
                 documentDetail.setDetailStatus(detailStatus);
                 documentDetailRepository.save(documentDetail);
         }
+
+        public Pair<String, byte[]> exportDocumentDetail(final Long documentId) throws IOException {
+                final List<DocumentDetail> documentDetailList = documentDetailRepository
+                                .findAllByDocument(documentService.getDocumentById(documentId));
+                final String[] headerFile = new String[] { "X", "Y" };
+                final List<String[]> allDataLines = new ArrayList<String[]>();
+                allDataLines.add(headerFile);
+                final List<String[]> dataLines = documentDetailList.stream()
+                                .sorted(Comparator.comparing(DocumentDetail::getId))
+                                .map(detail -> {
+                                        final String[] d = new String[2];
+                                        d[0] = String.valueOf(detail.getX());
+                                        d[1] = String.valueOf(detail.getY());
+                                        return d;
+                                }).collect(Collectors.toList());
+
+                allDataLines.addAll(dataLines);
+                String pattern1 = "dd-MM-yyyy";
+                String pattern2 = "HH:mm:ss";
+                final SimpleDateFormat simpleDateFormatDate = new SimpleDateFormat(pattern1);
+                final SimpleDateFormat simpleDateFormatTime = new SimpleDateFormat(pattern2);
+                final Date date = new Date();
+                final String fileName = documentId + "_" + simpleDateFormatDate.format(date) + "_" + simpleDateFormatTime.format(date)+ ".csv";
+                File csvOutputFile = new File(fileName );
+                try (PrintWriter pw = new PrintWriter(csvOutputFile)) {
+                        allDataLines.stream()
+                                        .map(this::convertToCSV)
+                                        .forEach(pw::println);
+                }
+                try (FileInputStream fileStream = new FileInputStream(csvOutputFile)) {
+                        // Instantiate array
+                        byte[] arr = new byte[(int) csvOutputFile.length()];
+
+                        // read All bytes of File stream
+                        fileStream.read(arr, 0, arr.length);
+
+                        return Pair.of(fileName, arr);
+                } catch (Exception e) {
+                        System.out.println(e.getMessage());
+                        return null;
+                }
+        }
+
+        public String convertToCSV(String[] data) {
+                return String.join(",", data);
+        }
+
+        @Transactional
+        public void importDocumentDetail(final Long documentId, final MultipartFile csv) throws IOException {
+                final List<ImportRecordDocumentDetail> importRecordList = csvParser.parseList(csv.getInputStream(),
+                                ImportRecordDocumentDetail.class, ',');
+
+                importRecordList.forEach(r -> {
+                        final Detail detail = new Detail(null, documentId, "-", "-", DETAIL_STATUS_VALIDATED,
+                                        r.retrieveX(),
+                                        r.retrieveY(),
+                                        userService.getApplicationUser().getId());
+                        detailRepository.save(detail);
+                });
+        }
+
 }

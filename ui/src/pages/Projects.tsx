@@ -49,6 +49,28 @@ const Projects: React.VFC = () => {
     const [showUpload, setShowUpload] = useState(false)
     const [documentId, setDocumentId] = useState(0)
 
+    const rowSelectionProject : object = {
+        type: 'radio',
+        onChange: (selectedRowKeys: number, selectedRows: Project) => {
+            console.log(`change: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+        onSelect: (record : Project, selected: Project) => {
+            console.log('select:', record, selected);
+            projectState.context.currentProject = record
+        },
+    };
+
+    const rowSelectionProjectDetail : object = {
+        type: 'radio',
+        onChange: (selectedRowKeys: number, selectedRows: ProjectDetail) => {
+            console.log(`change: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        },
+        onSelect: (record : ProjectDetail, selected: ProjectDetail) => {
+            console.log('select:', record, selected);
+            projectState.context.currentProjectDetail = record
+        },
+    };
+
     const columns: ColumnProps<Project>[] = [
         {
             title: '#',
@@ -207,6 +229,7 @@ const Projects: React.VFC = () => {
                     <div className="site-card-wrapper">
                         <Table rowKey="id" scroll={{x: 'calc(1200px+50%)'}} bordered
                                dataSource={projectState.context.projects}
+                               rowSelection={rowSelectionProject}
                                expandable={{
                                    expandedRowRender: record =>
                                        <>
@@ -223,6 +246,7 @@ const Projects: React.VFC = () => {
                                            <div style={{margin: 10}}>
                                                <Table rowKey="id" dataSource={record.projectDetails} pagination={false}
                                                       bordered={true}
+                                                      rowSelection={rowSelectionProjectDetail}
                                                       columns={columnDetails} size="small"/>
                                            </div>
                                        </>,
@@ -231,7 +255,6 @@ const Projects: React.VFC = () => {
                                rowClassName={(record, index) => {
                                    return index % 2 ? 'shallow_gray' : 'deep_gray'
                                }}
-
                                columns={columns} size="small"/>
                     </div>
                     {showUpload && (<DocumentImport documentId={documentId}
@@ -330,7 +353,8 @@ const Projects: React.VFC = () => {
 
                             <Form.Item
                                 label="Document"
-                                name="document"
+                                name="documentId"
+                                key={projectState.context.currentProjectDetail?.document ? projectState.context.currentProjectDetail.document.id : 0}
                                 initialValue={projectState.context.currentProjectDetail ? projectState.context.currentProjectDetail.document : undefined}
                                 rules={[{required: true, message: 'Please input document!'}]}
                             >
@@ -339,8 +363,9 @@ const Projects: React.VFC = () => {
                                         <Card
                                             hoverable
                                             style={{ width: 120, height: 60 }}
-                                            cover={<img alt="example" src={
-                                                projectState.context.currentProjectDetail ?
+                                            key={projectState.context.currentProjectDetail?.document ? projectState.context.currentProjectDetail.document.id : 0}
+                                            cover={<img alt="image_to_be" src={
+                                                projectState.context.currentProjectDetail?.document ?
                                                 url(projectState.context.currentProjectDetail.document.id) :
                                                 ''
                                             } />}
@@ -387,13 +412,13 @@ const Projects: React.VFC = () => {
                             </Button>
                             <Button key="submit" type="primary" onClick={() => {
                                 const docId = formProjectDetails.getFieldValue('documentId')
-                                const doc: File = {} as File
                                 send({
                                     type: 'SAVE_PROJECT_DETAIL', payload: {
                                         id: formProjectDetails.getFieldValue('id'),
                                         name: formProjectDetails.getFieldValue('name'),
                                         description: formProjectDetails.getFieldValue('description'),
-                                        document: doc,
+                                        document: projectState.context.currentProjectDetail?.document ?
+                                             projectState.context.currentProjectDetail.document : undefined as unknown as File,
                                         username: userContext && userContext.username ? userContext.username : ''
                                     }
                                 })
@@ -408,11 +433,15 @@ const Projects: React.VFC = () => {
 
             <Match on={['pickDocument']} state={projectState}>
                 <PickDocument
-                    documents = {projectState.context.documents}
-                    pick={(file: File) => send({
-                            type:"SAVE_DOC",
+                    documents = {projectState.context.documents.filter(doc=> !projectState.context.currentProject?.projectDetails
+                            .map(detail => detail.document.id).includes(doc.id)
+                    )}
+                    pick={(file: File) => {
+                        send({
+                            type: 'SAVE_DOC',
                             payload: {document: file}
-                        })}
+                        })
+                    }}
                     close={()=> send({type: 'CANCEL_ADD_DOC'})}
                 />
             </Match>
@@ -445,7 +474,6 @@ interface ProjectMachineContext {
     documents: Array<File>
     currentProject?: Project
     currentProjectDetail?: ProjectDetail
-    documentToPickForDetail?: File
 }
 
 interface ProjectMachineSchema {
@@ -578,7 +606,7 @@ const createProjectMachine = (userId: number) =>
                         CANCEL_ADD_DOC: {
                             target:'addEditProjectDetail'
                         },
-                        ADD_DOC: {
+                        SAVE_DOC: {
                             target: 'savingDoc'
                         },
                     }
@@ -633,7 +661,13 @@ const createProjectMachine = (userId: number) =>
                     if (event.type === 'SAVE_DOC') {
                         return {
                             ...context,
-                            documentToPickForDetail: event.payload.document
+                            currentProjectDetail: {
+                                id: context.currentProjectDetail ? context.currentProjectDetail.id : undefined as unknown as number,
+                                document: event.payload.document ? event.payload.document : undefined as unknown as File,
+                                name: context.currentProjectDetail ? context.currentProjectDetail.name : '',
+                                description: context.currentProjectDetail ? context.currentProjectDetail.description : '',
+                                subscriberUsername: ''
+                            }
                         }
                     }
                     return {

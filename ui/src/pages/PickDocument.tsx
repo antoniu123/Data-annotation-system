@@ -16,11 +16,11 @@ const PickDocument: React.VFC<PickDocumentProps> = ({documents, pick, close}) =>
 
     const rowSelection : object = {
         type: 'radio',
-        onChange: (selectedRowKeys:string[] | number[], selectedRows: File[]) => {
-            console.log(`change: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        onChange: (selectedRowKeys: number) => {
+            console.log(`change: ${selectedRowKeys}`);
         },
-        onSelect: (record : File, selected: File, selectedRows: File[]) => {
-            console.log('select:', record, selected, selectedRows);
+        onSelect: (record : File) => {
+            console.log('select:', record);
             setFile(record)
         },
     };
@@ -59,9 +59,13 @@ const PickDocument: React.VFC<PickDocumentProps> = ({documents, pick, close}) =>
 
     return (
         <Modal visible={true} footer={null} title={null} maskClosable={false} closable={true} onCancel={()=>close()} width={600}>
-            <Table columns={columns} rowSelection={rowSelection} dataSource={documents.filter(d=>d.documentType==='image/jpeg')}
+            <Table rowKey={record => record.id}  columns={columns} rowSelection={rowSelection}
+                    dataSource={documents.filter(d=>d.documentType==='image/jpeg')}
                    scroll={{ x: 400, y: undefined }}/>
-            <Button onClick={()=>pick(file ? file : undefined as unknown as File)}>
+            <Button onClick={()=>{
+                pick(file ? file : undefined as unknown as File)
+                close()
+            }}>
                 Ok
             </Button>
         </Modal>

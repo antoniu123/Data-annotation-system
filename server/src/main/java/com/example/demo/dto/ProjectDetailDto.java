@@ -2,14 +2,16 @@ package com.example.demo.dto;
 
 public class ProjectDetailDto {
 	private Long id;
-	private DocumentDto documentDto;
+	private ProjectDto project;
+	private DocumentDto document;
 	private String name;
 	private String description;
 	private String subscriberUsername;
 
-	public ProjectDetailDto(Long id, ProjectDto projectDto, DocumentDto documentDto, String name, String description, String subscriberUsername) {
+	public ProjectDetailDto(Long id, ProjectDto project, DocumentDto document, String name, String description, String subscriberUsername) {
 		this.id = id;
-		this.documentDto = documentDto;
+		this.project = project;
+		this.document = document;
 		this.name = name;
 		this.description = description;
 		this.subscriberUsername = subscriberUsername;
@@ -23,12 +25,20 @@ public class ProjectDetailDto {
 		this.id = id;
 	}
 
-	public DocumentDto getDocumentDto() {
-		return documentDto;
+	public ProjectDto getProject() {
+		return project;
 	}
 
-	public void setDocumentDto(DocumentDto documentDto) {
-		this.documentDto = documentDto;
+	public void setProject(ProjectDto project) {
+		this.project = project;
+	}
+
+	public DocumentDto getDocument() {
+		return document;
+	}
+
+	public void setDocument(DocumentDto document) {
+		this.document = document;
 	}
 
 	public String getName() {

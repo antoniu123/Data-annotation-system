@@ -45,7 +45,7 @@ public class ProjectDetailService {
 
 	public DetailProject addDetailToProject(final Long projectId, final ProjectDetailDto projectDetailDto){
 		final Project project = projectRepository.findById(projectId).orElseGet(Project::new);
-		final Document document = documentRepository.findById(projectDetailDto.getDocumentDto().getId()).orElseGet(Document::new);
+		final Document document = documentRepository.findById(projectDetailDto.getDocument().getId()).orElseGet(Document::new);
 		final ApplicationUser subscriber = applicationUserRepository.findByUsername(projectDetailDto.getSubscriberUsername())
 				.orElseGet(ApplicationUser::new);
 		return detailProjectRepository.save(new DetailProject(projectDetailDto.getId(), projectId,
