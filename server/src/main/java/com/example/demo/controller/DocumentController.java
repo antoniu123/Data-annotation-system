@@ -86,14 +86,19 @@ public class DocumentController {
     }
 
     @GetMapping(value = "/userId/{userId}/documents")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasRole('ADMIN') or hasRole('USER') or hasRole('VALIDATOR')")
     public ResponseEntity<List<DocumentDto>> getMyDocumentList(@PathVariable Long userId) {
         return ResponseEntity.ok().body(imageService.getDocumentListByUser(userId));
     }
 
     @GetMapping(value = "/document/{id}/details/all", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ImageDetailDto>> getDocumentDetail(@PathVariable Long id) throws SQLException {
-        return ResponseEntity.ok().body(documentDetailService.getAllDetailForDocument(id));
+        return ResponseEntity.ok().body(documentDetailService.getAllValidatedDetailForDocument(id));
+    }
+
+    @GetMapping(value = "/document/{id}/details/new", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<ImageDetailDto>> getNewDocumentDetail(@PathVariable Long id) throws SQLException {
+        return ResponseEntity.ok().body(documentDetailService.getAllNewDetailForDocument(id));
     }
 
     @PostMapping(value = "/document/{id}/detail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -103,7 +108,7 @@ public class DocumentController {
         detailList.forEach(detail -> {
             documentDetailService.save(id, detail);
         });
-        return ResponseEntity.status(HttpStatus.CREATED).body(documentDetailService.getAllDetailForDocument(id));
+        return ResponseEntity.status(HttpStatus.CREATED).body(documentDetailService.getAllValidatedDetailForDocument(id));
     }
 
     @GetMapping(value = "/document/{id}/count", produces = MediaType.APPLICATION_JSON_VALUE)

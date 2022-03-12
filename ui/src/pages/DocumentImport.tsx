@@ -1,10 +1,10 @@
-import { UploadOutlined } from '@ant-design/icons'
-import { useMachine } from '@xstate/react'
-import {Col, Form, Input, Modal, notification, Progress, Row} from 'antd'
-import Upload, { RcFile, UploadChangeParam } from 'antd/lib/upload'
+import {UploadOutlined} from '@ant-design/icons'
+import {useMachine} from '@xstate/react'
+import {Form, Modal, notification, Progress} from 'antd'
+import Upload, {RcFile, UploadChangeParam} from 'antd/lib/upload'
 import React from 'react'
-import { assign, createMachine } from 'xstate'
-import { Card, CardSection } from '../shared/Card'
+import {assign, createMachine} from 'xstate'
+import {Card, CardSection} from '../shared/Card'
 
 const DocumentImport: React.VFC<{documentId: number, initialErrorMessage: string, close: ()=> void}> = ({
   documentId,
@@ -15,8 +15,6 @@ const DocumentImport: React.VFC<{documentId: number, initialErrorMessage: string
   const availableExtensions = [".csv"]
   const [uploadState, send] = useMachine(createUploadMachine(initialErrorMessage))
   const token = JSON.parse(window.localStorage.getItem("jwt") ?? "")
-  let interestName:string | undefined = form.getFieldValue("name")
-
 
   const props = {
     name: 'file',
@@ -78,13 +76,13 @@ const DocumentImport: React.VFC<{documentId: number, initialErrorMessage: string
         })
         form.resetFields()
       }
-    },  
+    },
     onSuccess(){
       form.resetFields()
       send({
         type: 'SUCCESS',
         payload: ''
-      })      
+      })
     },
     accept: '.csv',
     showUploadList: false
@@ -109,7 +107,7 @@ const DocumentImport: React.VFC<{documentId: number, initialErrorMessage: string
                 </Upload>
               </div>
             </div>
-          </CardSection>  
+          </CardSection>
         </Card>
         <Card className="h-full">
            <CardSection >
@@ -140,7 +138,7 @@ interface ImportMachineContext {
 export type ImportMachineEvent =
     | { type: 'SUCCESS', payload: string }
     | { type: 'UPLOAD' , payload: string }
-    | { type: 'ERROR', payload: string }  
+    | { type: 'ERROR', payload: string }
     | { type: 'UPLOADING', payload: string }
     | { type: 'UPDATE_PROGRESS', payload: string }
 

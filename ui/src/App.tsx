@@ -1,17 +1,20 @@
 import React from 'react';
-import { Alert, Input, Button, Form, Layout, Modal, Result, Spin, notification } from 'antd';
-import { Route, Switch, withRouter } from 'react-router-dom'
-import { LoadingOutlined } from '@ant-design/icons'
+import {Alert, Button, Form, Input, Layout, Modal, notification, Result, Spin} from 'antd';
+import {Route, Switch, withRouter} from 'react-router-dom'
+import {LoadingOutlined} from '@ant-design/icons'
 import Home from './Home';
 import About from './pages/About';
-import { createAuthMachine } from './AuthMachine';
-import { useMachine } from '@xstate/react';
+import {createAuthMachine} from './AuthMachine';
+import {useMachine} from '@xstate/react';
 import Match from './shared/Match';
-import { Footer } from 'antd/lib/layout/layout';
+import {Footer} from 'antd/lib/layout/layout';
 import Navbar from './shared/Navbar';
 import Dashboard from './pages/Dashboard';
 import FileUpload from './shared/FileUpload';
 import Projects from "./pages/Projects";
+import {Roles} from "./models/Roles";
+import Users from "./pages/Users";
+import TagImageValidate from "./pages/TagImageValidate";
 
 const { Header, Content } = Layout
 
@@ -422,8 +425,13 @@ const App: React.VFC = () => {
                 <Route path={'/'} exact component={() => <Home />} />
                 <Route path={'/dashboard'} exact component={() => <Dashboard/>} />
                 <Route path={'/projects'} exact component={() => <Projects />} />
-                {/*<Route path={'/tasks'} exact component={() => <Tasks />} />*/}
-                <Route path={'/upload'} exact component={() => <FileUpload initialState={"fillName"} initialErrorMessage={""}/>} /> 
+                { authState.context.authResult?.roles.includes(Roles.ADMIN) &&
+                  <Route path={'/users'} exact component={() => <Users/>}/>
+                }
+                {/*{ authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&*/}
+                {/*<Route path={'/validate'} exact component={() => <TagImageValidate/>}/>*/}
+                {/*}*/}
+                  <Route path={'/upload'} exact component={() => <FileUpload initialState={"fillName"} initialErrorMessage={""}/>} />
                 <Route path={'/about'} exact component={() => <About />} />  
               </Switch>
             </Content>

@@ -1,7 +1,7 @@
-import { UserOutlined } from '@ant-design/icons';
-import { Popover } from 'antd';
+import {UserOutlined} from '@ant-design/icons';
+import {Popover} from 'antd';
 import React from 'react';
-import { Roles } from '../models/Roles';
+import {Roles} from '../models/Roles';
 import UserDetail from './UserDetail';
 
 interface NavbarProps {
@@ -41,9 +41,14 @@ const Navbar : React.VFC<NavbarProps> = ({roles, user, logOut, changePassword}) 
                                     <a href="/" className="px-3 py-2 text-sm font-medium text-white rounded-md bg-turquoise hover:bg-turquoise-dark">Home</a>
                                     <a href="/dashboard" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Dashboard</a>
                                     <a href="/projects" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Projects</a>
-                                    <a href="/tasks" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Tasks</a>
                                     <a href="/upload" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Upload</a>
                                     <a href="/about" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Contact</a>
+                                    { roles.includes(Roles.ADMIN) &&
+                                        <a href="/users" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Users</a>
+                                    }
+                                    { roles.includes(Roles.VALIDATOR) &&
+                                    <a href="/validate" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Validate</a>
+                                    }
                                 </div>
                             </div>
                         </div>

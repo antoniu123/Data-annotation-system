@@ -3,10 +3,6 @@ import {UserOutlined} from "@ant-design/icons";
 
 const About: React.VFC = () => {
 
-  const url = (id: number) : string => {
-      return `http://${process.env.REACT_APP_SERVER_NAME}/document/`+ id
-  }
-
   return (
       <>
           <div className="flex flex-row">

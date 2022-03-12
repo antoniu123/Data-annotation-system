@@ -32,7 +32,7 @@ public class ImportExportController {
     }
 
     @GetMapping(value = "/document/{documentId}/export")
-    //@PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<byte[]> exportDocumentDetails(@PathVariable Long documentId)
             throws SQLException, IOException {
         Pair<String, byte[]> name = documentDetailService.exportDocumentDetail(documentId);

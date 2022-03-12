@@ -58,7 +58,7 @@ const PickDocument: React.VFC<PickDocumentProps> = ({documents, pick, close}) =>
     ];
 
     return (
-        <Modal visible={true} footer={null} title={null} maskClosable={false} closable={true} onCancel={()=>close()} width={600}>
+        <Modal visible={true} footer={null} title={"Pick Document"} maskClosable={false} closable={true} onCancel={()=>close()} width={600}>
             <Table rowKey={record => record.id}  columns={columns} rowSelection={rowSelection}
                     dataSource={documents.filter(d=>d.documentType==='image/jpeg')}
                    scroll={{ x: 400, y: undefined }}/>

@@ -301,7 +301,7 @@ const Projects: React.VFC = () => {
                             >
                                 <Input/>
                             </Form.Item>
-                            <div className="items-center">
+                            <div className="px-44">
                                 <Button key="back" onClick={() => {
                                     send({
                                         type: 'CANCEL_ADD_EDIT'
@@ -328,7 +328,7 @@ const Projects: React.VFC = () => {
             </Match>
 
             <Match on={['addEditProjectDetail']} state={projectState}>
-                <Modal visible={true} maskClosable={false} footer={null} onCancel={() => {
+                <Modal visible={true} maskClosable={false} title={"Add project detail"} footer={null} onCancel={() => {
                     send({type: 'CANCEL_ADD_EDIT_DETAIL'})
                 }}>
                     <div className="py-4">
@@ -402,30 +402,29 @@ const Projects: React.VFC = () => {
                                 <Input/>
                             </Form.Item>
 
-
-                            <Button key="back" onClick={() => {
-                                send({
-                                    type: 'CANCEL_ADD_EDIT_DETAIL'
-                                })
-                            }}>
-                                Cancel
-                            </Button>
-                            <Button key="submit" type="primary" onClick={() => {
-                                const docId = formProjectDetails.getFieldValue('documentId')
-                                send({
-                                    type: 'SAVE_PROJECT_DETAIL', payload: {
-                                        id: formProjectDetails.getFieldValue('id'),
-                                        name: formProjectDetails.getFieldValue('name'),
-                                        description: formProjectDetails.getFieldValue('description'),
-                                        document: projectState.context.currentProjectDetail?.document ?
-                                             projectState.context.currentProjectDetail.document : undefined as unknown as File,
-                                        username: userContext && userContext.username ? userContext.username : ''
-                                    }
-                                })
-                            }}>
-                                Submit
-                            </Button>
-
+                            <div className="px-44">
+                                <Button key="back" onClick={() => {
+                                    send({
+                                        type: 'CANCEL_ADD_EDIT_DETAIL'
+                                    })
+                                }}>
+                                    Cancel
+                                </Button>
+                                <Button key="submit" type="primary" onClick={() => {
+                                    send({
+                                        type: 'SAVE_PROJECT_DETAIL', payload: {
+                                            id: formProjectDetails.getFieldValue('id'),
+                                            name: formProjectDetails.getFieldValue('name'),
+                                            description: formProjectDetails.getFieldValue('description'),
+                                            document: projectState.context.currentProjectDetail?.document ?
+                                                 projectState.context.currentProjectDetail.document : undefined as unknown as File,
+                                            username: userContext && userContext.username ? userContext.username : ''
+                                        }
+                                    })
+                                }}>
+                                    Submit
+                                </Button>
+                            </div>
                         </Form>
                     </div>
                 </Modal>

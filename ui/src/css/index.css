@@ -81,3 +81,7 @@ table {
 .ant-modal-title {
     color: rgb(233, 222, 222)
 }
+
+.ant-card-actions {
+    background: rgba(255,255,255,0.0)
+}

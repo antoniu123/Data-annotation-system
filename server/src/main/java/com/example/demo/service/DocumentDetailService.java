@@ -61,7 +61,7 @@ public class DocumentDetailService {
                 this.csvParser = csvParser;
         }
 
-        public List<ImageDetailDto> getAllDetailForDocument(final Long documentId) {
+        public List<ImageDetailDto> getAllValidatedDetailForDocument(final Long documentId) {
                 return documentDetailRepository.findAllByDocument(documentService.getDocumentById(documentId))
                                 .parallelStream()
                                 .filter(detail -> detail.getDetailStatus().getName().equals("VALIDATED"))
@@ -69,6 +69,16 @@ public class DocumentDetailService {
                                                 detail.getDescription(),
                                                 detail.getX(), detail.getY()))
                                 .collect(Collectors.toList());
+        }
+
+        public List<ImageDetailDto> getAllNewDetailForDocument(final Long documentId) {
+                return documentDetailRepository.findAllByDocument(documentService.getDocumentById(documentId))
+                        .parallelStream()
+                        .filter(detail -> detail.getDetailStatus().getName().equals("NEW"))
+                        .map(detail -> new ImageDetailDto(detail.getId(), detail.getName(),
+                                detail.getDescription(),
+                                detail.getX(), detail.getY()))
+                        .collect(Collectors.toList());
         }
 
         @Transactional
@@ -82,6 +92,7 @@ public class DocumentDetailService {
                 documentDetail.setY(imageDetail.getY());
                 documentDetail.setOwner(userService.getApplicationUser());
                 DetailStatus detailStatus;
+                //TODO
                 if (userService.getApplicationUser().getRoles().stream()
                                 .map(r -> r.getName().toString()).anyMatch(x -> x.equals("ROLE_ADMIN"))) {
                         detailStatus = detailStatusRepository.findByName("VALIDATED")

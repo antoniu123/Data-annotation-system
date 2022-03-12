@@ -6,7 +6,7 @@ import {useState} from "react"
 import ImageMarker, {Marker, MarkerComponentProps} from "react-image-marker"
 import {assign, Machine} from "xstate"
 import {ImageDetail} from "../models/ImageDetail"
-import Match from "./Match"
+import Match from "../shared/Match"
 import LineTo from 'react-lineto';
 
 
@@ -26,7 +26,7 @@ const formItemLayoutWithOutLabel = {
     }
 }
 
-interface TagImageProps {
+interface TagImageValidateProps {
     docId: number
     urlImage: string
     visible: boolean
@@ -34,7 +34,7 @@ interface TagImageProps {
     onRefresh: (cnt: number) => void
 }
 
-const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, onRefresh}) => {
+const TagImageValidate: React.FC<TagImageValidateProps> = ({docId, urlImage, visible, onClose, onRefresh}) => {
 
     const [tagState, send] = useMachine(createTagImageMachine(docId))
 
@@ -253,7 +253,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
 
 }
 
-export default TagImage
+export default TagImageValidate
 
 interface TagImageMachineContext {
     documentDetails: ImageDetail[]
@@ -360,7 +360,7 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
     {
 
         services: {
-            loadDetails: () => axios.get(`http://${process.env.REACT_APP_SERVER_NAME}/document/${docId}/details/all`),
+            loadDetails: () => axios.get(`http://${process.env.REACT_APP_SERVER_NAME}/document/${docId}/details/new`),
             deleteDetailData: (id, event) => {
                 const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
                 let detailId
