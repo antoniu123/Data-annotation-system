@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,14 +98,20 @@ public class DocumentController {
     }
 
     @GetMapping(value = "/document/{id}/details/new", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('VALIDATOR')")
     public ResponseEntity<List<ImageDetailDto>> getNewDocumentDetail(@PathVariable Long id) throws SQLException {
         return ResponseEntity.ok().body(documentDetailService.getAllNewDetailForDocument(id));
+    }
+
+    @GetMapping(value = "/document/new", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize("hasRole('VALIDATOR')")
+    public ResponseEntity<List<Document>> getNewDocument() throws SQLException {
+        return ResponseEntity.ok().body(imageService.getDocumentsWithStatusNew());
     }
 
     @PostMapping(value = "/document/{id}/detail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ImageDetailDto>> saveDocumentDetails(@PathVariable Long id,
             @RequestBody List<ImageDetailDto> detailList) throws SQLException {
-
         detailList.forEach(detail -> {
             documentDetailService.save(id, detail);
         });
@@ -121,4 +128,12 @@ public class DocumentController {
     public void saveDocumentDetails(@PathVariable Long detailId) throws SQLException {
         documentDetailService.deleteDocumentDetail(detailId);
     }
+
+    @PatchMapping(value = "/documentDetail/{detailId}/validate")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
+    @PreAuthorize("hasRole('VALIDATOR')")
+    public void validateDocumentDetails(@PathVariable Long detailId) throws SQLException {
+        documentDetailService.validateDocumentDetail(detailId);
+    }
+
 }

@@ -14,7 +14,7 @@ import FileUpload from './shared/FileUpload';
 import Projects from "./pages/Projects";
 import {Roles} from "./models/Roles";
 import Users from "./pages/Users";
-import TagImageValidate from "./pages/TagImageValidate";
+import Validate from "./pages/Validate";
 
 const { Header, Content } = Layout
 
@@ -428,9 +428,9 @@ const App: React.VFC = () => {
                 { authState.context.authResult?.roles.includes(Roles.ADMIN) &&
                   <Route path={'/users'} exact component={() => <Users/>}/>
                 }
-                {/*{ authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&*/}
-                {/*<Route path={'/validate'} exact component={() => <TagImageValidate/>}/>*/}
-                {/*}*/}
+                { authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&
+                <Route path={'/validate'} exact component={() => <Validate/>}/>
+                }
                   <Route path={'/upload'} exact component={() => <FileUpload initialState={"fillName"} initialErrorMessage={""}/>} />
                 <Route path={'/about'} exact component={() => <About />} />  
               </Switch>

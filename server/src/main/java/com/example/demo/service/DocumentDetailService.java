@@ -201,4 +201,13 @@ public class DocumentDetailService {
                 });
         }
 
+        @Transactional
+        public void validateDocumentDetail(Long detailId) {
+                DetailStatus detailStatus = detailStatusRepository.findByName("VALIDATED")
+                        .orElseThrow(() -> new RuntimeException("Error: Detail Status not found."));
+                int rez = detailRepository.validate(detailId, detailStatus.getId().longValue());
+                if (rez !=1){
+                        throw new RuntimeException("detail cannot be validated");
+                }
+        }
 }

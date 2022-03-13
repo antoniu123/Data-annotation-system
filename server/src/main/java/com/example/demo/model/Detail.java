@@ -32,7 +32,7 @@ public class Detail {
     private String description;
 
     @Column(name = "DETAIL_STATUS_ID", nullable = false)
-    private Long detailStatusStatusId;
+    private Long detailStatusId;
 
     @Column(name = "X")
     private Double x;

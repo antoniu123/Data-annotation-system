@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.print.Doc;
 import javax.sql.rowset.serial.SerialException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -89,5 +90,9 @@ public class DocumentService {
 
     public Document getDocumentById(Long documentId) {
         return imageRepository.getById(documentId);
+    }
+
+    public List<Document> getDocumentsWithStatusNew(){
+        return imageRepository.findAllDocumentsWithNew();
     }
 }
