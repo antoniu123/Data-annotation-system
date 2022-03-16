@@ -62,7 +62,7 @@ const Dashboard: React.VFC = () => {
                     <Row className="font-extrabold" >Images</Row>
                     <Row gutter={[16, 16]}>
                       {documentState.context.documents
-                        .filter(doc => doc.documentType === 'image/jpeg' )
+                        .filter(doc => doc.documentType === 'image/jpeg' || doc.documentType === 'image/png' )
                         .sort((a,b)=>a.id-b.id)
                         .map((document, index) => (                        
                           <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>

@@ -39,9 +39,17 @@ const Navbar : React.VFC<NavbarProps> = ({roles, user, logOut, changePassword}) 
                             <div className="hidden sm:block sm:ml-6">
                                 <div className="flex space-x-4">
                                     <a href="/" className="px-3 py-2 text-sm font-medium text-white rounded-md bg-turquoise hover:bg-turquoise-dark">Home</a>
-                                    <a href="/dashboard" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Dashboard</a>
-                                    <a href="/projects" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Projects</a>
-                                    <a href="/upload" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Upload</a>
+                                    {!roles.includes(Roles.VALIDATOR) &&
+                                    <a href="/dashboard"
+                                       className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Dashboard</a>
+                                    }
+                                    {!roles.includes(Roles.VALIDATOR) &&
+                                    <a href="/projects"
+                                       className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Projects</a>
+                                    }
+                                    { (roles.includes(Roles.ADMIN) || roles.includes(Roles.USER)) &&
+                                        <a href="/upload" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Upload</a>
+                                    }
                                     <a href="/about" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Contact</a>
                                     { roles.includes(Roles.ADMIN) &&
                                         <a href="/users" className="px-3 py-2 text-sm font-medium text-white rounded-md hover:bg-turquoise hover:text-white">Users</a>

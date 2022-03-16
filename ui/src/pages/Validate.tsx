@@ -31,7 +31,7 @@ const Validate: React.VFC = () => {
             key: 'document',
             render: (value: number) => <Card
                 hoverable
-                style={{ width: 120, height: 60 }}
+                style={{  height: 60}}
                 cover = {
                     value ? <img alt="example" src={ `${url(value)}` } />: <> </>
                 }
@@ -79,7 +79,7 @@ const Validate: React.VFC = () => {
         </Match>
 
         <Match on={ ['idle']} state={validateState}>
-            <Table dataSource={validateState.context.documents.filter(d=>d.documentType==='image/jpeg')} columns={columns} />
+            <Table dataSource={validateState.context.documents.filter(d=>d.documentType.includes('image'))} columns={columns} />
         </Match>
 
         <Match on={ ['validate']} state={validateState}>
@@ -260,7 +260,7 @@ const documentValidateMachine = () =>
             services: {
                 loadData: (_, event) => {
                     const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
-                    const url = `http://${process.env.REACT_APP_SERVER_NAME}/document/new`
+                    const url = `http://${process.env.REACT_APP_SERVER_NAME}/documents/new`
                     return async () => axios
                         .get(url, {headers: {"Authorization": `Bearer ${token}`}})
                         .then((ret) => Promise.resolve(ret)
@@ -292,7 +292,7 @@ const documentValidateMachine = () =>
                     }
                     const url = `http://${process.env.REACT_APP_SERVER_NAME}/documentDetail/${detailId}/validate`
                     return async () => axios
-                        .patch(url, {headers: {"Authorization": `Bearer ${token}`}})
+                        .patch(url, {},{headers: {"Authorization": `Bearer ${token}`}})
                         .then((ret) => Promise.resolve(ret)
                         )
                         .catch((err) => {
@@ -301,7 +301,7 @@ const documentValidateMachine = () =>
                 },
                 deleteValidation: (id, event) => {
                     const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
-                    let detailId
+                    let detailId : number = 0
                     if (event.type === 'DELETE')
                         detailId = event.payload.detailId;
                     return axios.delete(`http://${process.env.REACT_APP_SERVER_NAME}/documentDetail/${detailId}`,

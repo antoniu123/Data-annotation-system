@@ -103,7 +103,7 @@ public class DocumentController {
         return ResponseEntity.ok().body(documentDetailService.getAllNewDetailForDocument(id));
     }
 
-    @GetMapping(value = "/document/new", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/documents/new", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('VALIDATOR')")
     public ResponseEntity<List<Document>> getNewDocument() throws SQLException {
         return ResponseEntity.ok().body(imageService.getDocumentsWithStatusNew());
@@ -130,8 +130,8 @@ public class DocumentController {
     }
 
     @PatchMapping(value = "/documentDetail/{detailId}/validate")
-    @ResponseStatus(value = HttpStatus.ACCEPTED)
     @PreAuthorize("hasRole('VALIDATOR')")
+    @ResponseStatus(value = HttpStatus.ACCEPTED)
     public void validateDocumentDetails(@PathVariable Long detailId) throws SQLException {
         documentDetailService.validateDocumentDetail(detailId);
     }

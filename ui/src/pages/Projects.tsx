@@ -56,20 +56,20 @@ const Projects: React.VFC = () => {
         },
         onSelect: (record : Project, selected: Project) => {
             console.log('select:', record, selected);
-            projectState.context.currentProject = record
+            send({type: 'ASSIGN_PROJECT', payload: {project: record}})
         },
     };
 
-    const rowSelectionProjectDetail : object = {
-        type: 'radio',
-        onChange: (selectedRowKeys: number, selectedRows: ProjectDetail) => {
-            console.log(`change: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-        },
-        onSelect: (record : ProjectDetail, selected: ProjectDetail) => {
-            console.log('select:', record, selected);
-            projectState.context.currentProjectDetail = record
-        },
-    };
+    // const rowSelectionProjectDetail : object = {
+    //     type: 'radio',
+    //     onChange: (selectedRowKeys: number, selectedRows: ProjectDetail) => {
+    //         console.log(`change: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+    //     },
+    //     onSelect: (record : ProjectDetail, selected: ProjectDetail) => {
+    //         console.log('select:', record, selected);
+    //         projectState.context.currentProjectDetail = record
+    //     },
+    // };
 
     const columns: ColumnProps<Project>[] = [
         {
@@ -181,7 +181,7 @@ const Projects: React.VFC = () => {
             title: 'Export',
             key: 'export',
             render: (record: ProjectDetail) => (
-                <Button type="primary" onClick={
+                <Button type="primary" disabled={userContext?.roles.toString() === "ROLE_VALIDATOR" || userContext?.roles.toString() === "ROLE_USER"} onClick={
                     () => {
                         send({
                             type: 'EXPORT', payload: {documentId: record.document.id}
@@ -194,7 +194,7 @@ const Projects: React.VFC = () => {
             title: 'Import',
             key: 'import',
             render: (record: ProjectDetail) => (
-                <Button type="primary" onClick={
+                <Button type="primary" disabled={userContext?.roles.toString() === "ROLE_VALIDATOR" || userContext?.roles.toString() === "ROLE_USER"} onClick={
                     () => {
                         setDocumentId(record.document.id)
                         setShowUpload(true)
@@ -207,7 +207,7 @@ const Projects: React.VFC = () => {
 
     return (
         <>
-            <Match on={['loading', 'savingProject', 'savingProjectDetail', 'exporting', 'savingDoc']} state={projectState}>
+            <Match on={['loading', 'savingProject', 'savingProjectDetail', 'exporting', 'savingDoc', 'assigning']} state={projectState}>
                 <Spin indicator={antIcon} tip="Loading...">
                     <Alert message="Please wait" type="info"/>
                 </Spin>
@@ -226,6 +226,16 @@ const Projects: React.VFC = () => {
                             })
                         }
                     }> Add Project</Button>
+                    {projectState.context.currentProject &&
+                    <Button type="primary" onClick={
+                        () => {
+                            formProjectDetails.resetFields()
+                            send({
+                                type: 'ADD_EDIT_PROJECT_DETAIL',
+                                payload: {projectDetail: undefined}
+                            })
+                        }
+                    }> Add Project Detail</Button>}
                     <div className="site-card-wrapper">
                         <Table rowKey="id" scroll={{x: 'calc(1200px+50%)'}} bordered
                                dataSource={projectState.context.projects}
@@ -233,20 +243,10 @@ const Projects: React.VFC = () => {
                                expandable={{
                                    expandedRowRender: record =>
                                        <>
-                                           <Button type="primary" onClick={
-                                               () => {
-                                                   formProjectDetails.resetFields()
-                                                   send({
-                                                       type: 'ADD_EDIT_PROJECT_DETAIL',
-                                                       payload: {projectDetail: undefined}
-                                                   })
-                                               }
-                                           }> Add Project Detail</Button>
                                            <div>Detalii document</div>
                                            <div style={{margin: 10}}>
                                                <Table rowKey="id" dataSource={record.projectDetails} pagination={false}
                                                       bordered={true}
-                                                      rowSelection={rowSelectionProjectDetail}
                                                       columns={columnDetails} size="small"/>
                                            </div>
                                        </>,
@@ -362,7 +362,7 @@ const Projects: React.VFC = () => {
                                     <Col span={12}>
                                         <Card
                                             hoverable
-                                            style={{ width: 120, height: 60 }}
+                                            style={{height: 100 }}
                                             key={projectState.context.currentProjectDetail?.document ? projectState.context.currentProjectDetail.document.id : 0}
                                             cover={<img alt="image_to_be" src={
                                                 projectState.context.currentProjectDetail?.document ?
@@ -480,6 +480,7 @@ interface ProjectMachineSchema {
     states: {
         loading: {}
         idle: {}
+        assigning: {}
         addEditProject: {}
         savingProject: {}
         addEditProjectDetail: {}
@@ -494,6 +495,7 @@ interface ProjectMachineSchema {
 type ProjectMachineEvent =
     | { type: 'RETRY' }
     | { type: 'ADD_EDIT_PROJECT', payload: { project: Project | undefined } }
+    | { type: 'ASSIGN_PROJECT', payload: { project: Project | undefined } }
     | { type: 'CANCEL_ADD_EDIT' }
     | { type: 'SAVE_PROJECT', payload: { id: number, name: string, description: string, ownerUsername: string } }
     | { type: 'ADD_EDIT_PROJECT_DETAIL', payload: { projectDetail: ProjectDetail | undefined } }
@@ -553,8 +555,15 @@ const createProjectMachine = (userId: number) =>
                         },
                         EXPORT: {
                             target: 'exporting'
+                        },
+                        ASSIGN_PROJECT: {
+                            target: 'assigning'
                         }
                     }
+                },
+                assigning: {
+                    entry: "assignCurrentProject",
+                    always: 'idle'
                 },
                 addEditProject: {
                     entry: 'assignCurrentProject',
@@ -674,7 +683,7 @@ const createProjectMachine = (userId: number) =>
                     }
                 }),
                 assignCurrentProject: assign((context, event) => {
-                    if (event.type === 'ADD_EDIT_PROJECT') {
+                    if (event.type === 'ADD_EDIT_PROJECT' || event.type === 'ASSIGN_PROJECT') {
                         return {
                             ...context,
                             currentProject: event.payload.project,

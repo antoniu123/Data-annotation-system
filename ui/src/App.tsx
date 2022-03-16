@@ -24,6 +24,7 @@ interface UserContextInterface {
   userId: number,
   email: string,
   username: string
+  roles: Roles[]
 }
 
 export const UserContext = React.createContext<UserContextInterface | null>(null);
@@ -406,7 +407,9 @@ const App: React.VFC = () => {
         <UserContext.Provider value={
                                      {userId: authState.context.authResult?.jti ? authState.context.authResult?.jti : 0, 
                                       email: authState.context.authResult?.iss ? authState.context.authResult?.iss : "",
-                                      username: authState.context.authResult?.sub? authState.context.authResult?.sub:""
+                                      username: authState.context.authResult?.sub? authState.context.authResult?.sub: "",
+                                      roles: authState.context.authResult?.roles && authState.context.authResult?.roles.length > 0 ?
+                                          authState.context.authResult?.roles : []
                                      }
                                     }>
           <Header>
@@ -423,15 +426,22 @@ const App: React.VFC = () => {
               }}>
               <Switch>
                 <Route path={'/'} exact component={() => <Home />} />
-                <Route path={'/dashboard'} exact component={() => <Dashboard/>} />
-                <Route path={'/projects'} exact component={() => <Projects />} />
+                {!authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&
+                  <Route path={'/dashboard'} exact component={() => <Dashboard/>}/>
+                }
+                {!authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&
+                  <Route path={'/projects'} exact component={() => <Projects/>}/>
+                }
                 { authState.context.authResult?.roles.includes(Roles.ADMIN) &&
                   <Route path={'/users'} exact component={() => <Users/>}/>
                 }
                 { authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&
                 <Route path={'/validate'} exact component={() => <Validate/>}/>
                 }
-                  <Route path={'/upload'} exact component={() => <FileUpload initialState={"fillName"} initialErrorMessage={""}/>} />
+                { (authState.context.authResult?.roles.includes(Roles.ADMIN) || authState.context.authResult?.roles.includes(Roles.USER)) &&
+                <Route path={'/upload'} exact component={() => <FileUpload initialState={"fillName"} initialErrorMessage={""}/>} />
+                }
+
                 <Route path={'/about'} exact component={() => <About />} />  
               </Switch>
             </Content>

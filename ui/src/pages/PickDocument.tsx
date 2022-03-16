@@ -37,7 +37,7 @@ const PickDocument: React.VFC<PickDocumentProps> = ({documents, pick, close}) =>
             key: 'document',
             render: (value: number) => <Card
                 hoverable
-                style={{ width: 120, height: 60 }}
+                style={{height: 60 }}
                 cover = {
                     value ? <img alt="example" src={ `${url(value)}` } />: <> </>
                 }
@@ -60,7 +60,7 @@ const PickDocument: React.VFC<PickDocumentProps> = ({documents, pick, close}) =>
     return (
         <Modal visible={true} footer={null} title={"Pick Document"} maskClosable={false} closable={true} onCancel={()=>close()} width={600}>
             <Table rowKey={record => record.id}  columns={columns} rowSelection={rowSelection}
-                    dataSource={documents.filter(d=>d.documentType==='image/jpeg')}
+                    dataSource={documents.filter(d=>d.documentType.includes('image'))}
                    scroll={{ x: 400, y: undefined }}/>
             <Button onClick={()=>{
                 pick(file ? file : undefined as unknown as File)

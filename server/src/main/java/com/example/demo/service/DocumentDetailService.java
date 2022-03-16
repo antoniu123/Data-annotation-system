@@ -9,22 +9,26 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import com.example.demo.dto.ImageDetailDto;
 import com.example.demo.model.Detail;
 import com.example.demo.model.DetailStatus;
 import com.example.demo.model.Document;
 import com.example.demo.model.DocumentDetail;
+import com.example.demo.model.DocumentRole;
+import com.example.demo.model.Role;
 import com.example.demo.parser.CsvParser;
 import com.example.demo.parser.model.ImportRecordDocumentDetail;
 import com.example.demo.repository.DetailRepository;
 import com.example.demo.repository.DetailStatusRepository;
 import com.example.demo.repository.DocumentDetailRepository;
 
+import com.example.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -143,7 +147,10 @@ public class DocumentDetailService {
 
         public Pair<String, byte[]> exportDocumentDetail(final Long documentId) throws IOException {
                 final List<DocumentDetail> documentDetailList = documentDetailRepository
-                                .findAllByDocument(documentService.getDocumentById(documentId));
+                                .findAllByDocument(documentService.getDocumentById(documentId))
+                        .stream()
+                        .filter(detail -> detail.getDetailStatus().getName().equals("VALIDATED"))
+                        .collect(Collectors.toList());
                 final String[] headerFile = new String[] { "X", "Y" };
                 final List<String[]> allDataLines = new ArrayList<String[]>();
                 allDataLines.add(headerFile);
