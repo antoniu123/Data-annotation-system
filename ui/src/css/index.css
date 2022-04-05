@@ -85,3 +85,7 @@ table {
 .ant-card-actions {
     background: rgba(255,255,255,0.0)
 }
+
+.ant-select {
+    width: 100%;
+}
