@@ -36,7 +36,7 @@
     "xstate": "^4.25.0"
   },
   "scripts": {
-    "start": "PORT=3001 craco start",
+    "start": "HTTPS=true PORT=3001 craco start",
     "build": "craco build",
     "test": "craco test",
     "typecheck": "tsc --noEmit",
