@@ -8,14 +8,18 @@ import com.example.demo.repository.DocumentRepository;
 import com.example.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.print.Doc;
 import javax.sql.rowset.serial.SerialException;
+import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.List;
@@ -94,5 +98,24 @@ public class DocumentService {
 
     public List<Document> getDocumentsWithStatusNew(){
         return imageRepository.findAllDocumentsWithNew();
+    }
+
+    @Transactional
+    public void saveImageFromVideo(File file, String name) throws SerialException, SQLException, IOException {
+        byte[] content = Files.readAllBytes(file.toPath());
+        Blob blob = new javax.sql.rowset.serial.SerialBlob(content);
+        String documentType = "image/png";
+        String fileName = removePathFromName(file.getName());
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username;
+        if (principal instanceof UserDetails) {
+            username = ((UserDetails) principal).getUsername();
+        } else {
+            username = principal.toString();
+        }
+        final ApplicationUser applicationUser = applicationUserRepository.findByUsername(username)
+                .orElseGet(ApplicationUser::new);
+        final Document image = new Document(null, name, documentType, fileName, blob, applicationUser);
+        imageRepository.save(image);
     }
 }

@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.sql.rowset.serial.SerialException;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -55,7 +55,7 @@ public class DocumentController {
     @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
     public ResponseEntity<String> uploadImage(@RequestPart("file") MultipartFile file,
             @RequestParam("name") String name)
-            throws SerialException, SQLException, IOException {
+            throws SQLException, IOException {
         Document uploadImage = imageService.uploadImage(file, name);
         return ResponseEntity.status(HttpStatus.CREATED).body(uploadImage.getFileName());
     }
@@ -78,8 +78,15 @@ public class DocumentController {
         return videoStreamService.prepareContent(id, fileType, httpRangeList);
     }
 
+    @PostMapping(value = "/video/extract/{id}")
+    public ResponseEntity<Void> extractFrame(@PathVariable("id") Long id, @Valid @RequestParam int nrFrames)
+            throws SQLException {
+        videoStreamService.extract(id, nrFrames);
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping(value = "/download/{id}")
-    public ResponseEntity<byte[]> getImageAsAttachement(@PathVariable Long id) throws SQLException {
+    public ResponseEntity<byte[]> getImageAsAttachment(@PathVariable Long id) throws SQLException {
         Pair<String, byte[]> name = imageService.getImage(id);
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + name.getFirst() + "\"")
@@ -93,46 +100,44 @@ public class DocumentController {
     }
 
     @GetMapping(value = "/document/{id}/details/all", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<ImageDetailDto>> getDocumentDetail(@PathVariable Long id) throws SQLException {
+    public ResponseEntity<List<ImageDetailDto>> getDocumentDetail(@PathVariable Long id) {
         return ResponseEntity.ok().body(documentDetailService.getAllValidatedDetailForDocument(id));
     }
 
     @GetMapping(value = "/document/{id}/details/new", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('VALIDATOR')")
-    public ResponseEntity<List<ImageDetailDto>> getNewDocumentDetail(@PathVariable Long id) throws SQLException {
+    public ResponseEntity<List<ImageDetailDto>> getNewDocumentDetail(@PathVariable Long id){
         return ResponseEntity.ok().body(documentDetailService.getAllNewDetailForDocument(id));
     }
 
     @GetMapping(value = "/documents/new", produces = MediaType.APPLICATION_JSON_VALUE)
     @PreAuthorize("hasRole('VALIDATOR')")
-    public ResponseEntity<List<Document>> getNewDocument() throws SQLException {
+    public ResponseEntity<List<Document>> getNewDocument(){
         return ResponseEntity.ok().body(imageService.getDocumentsWithStatusNew());
     }
 
     @PostMapping(value = "/document/{id}/detail", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ImageDetailDto>> saveDocumentDetails(@PathVariable Long id,
-            @RequestBody List<ImageDetailDto> detailList) throws SQLException {
-        detailList.forEach(detail -> {
-            documentDetailService.save(id, detail);
-        });
+            @RequestBody List<ImageDetailDto> detailList){
+        detailList.forEach(detail -> documentDetailService.save(id, detail));
         return ResponseEntity.status(HttpStatus.CREATED).body(documentDetailService.getAllValidatedDetailForDocument(id));
     }
 
     @GetMapping(value = "/document/{id}/count", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Integer> getDocumentDetailCount(@PathVariable Long id) throws SQLException {
+    public ResponseEntity<Integer> getDocumentDetailCount(@PathVariable Long id){
         return ResponseEntity.ok().body(documentDetailService.getNumberOfDetails(id));
     }
 
     @DeleteMapping(value = "/documentDetail/{detailId}")
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
-    public void saveDocumentDetails(@PathVariable Long detailId) throws SQLException {
+    public void saveDocumentDetails(@PathVariable Long detailId){
         documentDetailService.deleteDocumentDetail(detailId);
     }
 
     @PatchMapping(value = "/documentDetail/{detailId}/validate")
     @PreAuthorize("hasRole('VALIDATOR')")
     @ResponseStatus(value = HttpStatus.ACCEPTED)
-    public void validateDocumentDetails(@PathVariable Long detailId) throws SQLException {
+    public void validateDocumentDetails(@PathVariable Long detailId){
         documentDetailService.validateDocumentDetail(detailId);
     }
 
