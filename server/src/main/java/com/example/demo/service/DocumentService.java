@@ -118,4 +118,8 @@ public class DocumentService {
         final Document image = new Document(null, name, documentType, fileName, blob, applicationUser);
         imageRepository.save(image);
     }
+
+    public List<Document> getAllDocumentWithName(String name){
+        return imageRepository.findDocumentByName(name);
+    }
 }

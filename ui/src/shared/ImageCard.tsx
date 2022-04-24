@@ -28,7 +28,7 @@ const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage }) => {
         };
 
         getText()
-    },[textUrl,cnt]);
+    },[]);
 
     return (
       <>

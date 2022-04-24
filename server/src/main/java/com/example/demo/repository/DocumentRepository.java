@@ -16,4 +16,6 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
             "where id in (select document_id " +
             "from document_detail dd where dd.detail_status_id = (select id from detail_status where name = 'NEW'))")
     List<Document> findAllDocumentsWithNew();
+
+    List<Document> findDocumentByName(String name);
 }

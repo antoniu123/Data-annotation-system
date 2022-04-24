@@ -80,8 +80,8 @@ const Dashboard: React.VFC = () => {
                         .filter(doc=> doc.documentType === 'video/mp4')
                         .map((document, index) => (                        
                           <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>
-                            <VideoCard key={index} title={document.name} details={getRandom(1,20)} order={document.id} 
-                             urlVideo={urlVideo(document.id)} />
+                            <VideoCard key={index} id={document.id} title={document.name} details={getRandom(1,20)} order={document.id}
+                             urlVideo={urlVideo(document.id)} refresh={()=>send({type: 'RETRY'})}/>
                           </Col>                        
                       ))}
                      </Row>
@@ -152,15 +152,12 @@ interface DocumentMachineSchema {
   states: {
     loading: {}
     idle: {}
-    displayDetail: {}
     rejected: {}
   }
 }
 
 type DocumentMachineEvent =
   | { type: 'RETRY' }
-  | { type: 'OPEN_DETAIL' }
-  | { type: 'CLOSE_DETAIL' }
 
 const createDocumentMachine = (userId : number) =>
   Machine<DocumentMachineContext, DocumentMachineSchema, DocumentMachineEvent>(
@@ -196,16 +193,6 @@ const createDocumentMachine = (userId : number) =>
         idle: {
           on: {
             RETRY: {
-              target: 'loading'
-            },
-            OPEN_DETAIL: {
-              target: 'displayDetail'
-            }
-          }
-        },
-        displayDetail: {
-          on: {
-            CLOSE_DETAIL: {
               target: 'loading'
             }
           }

@@ -25,10 +25,8 @@ import com.example.demo.repository.DetailRepository;
 import com.example.demo.repository.DetailStatusRepository;
 import com.example.demo.repository.DocumentDetailRepository;
 
-import com.example.demo.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -114,10 +112,23 @@ public class DocumentDetailService {
         }
 
         public Integer getNumberOfDetails(Long documentId) {
-                return (int) documentDetailRepository.findAllByDocument(documentService.getDocumentById(documentId))
+                Document document = documentService.getDocumentById(documentId);
+                if (document.getDocumentType().contains("image")){
+                        return (int) documentDetailRepository.findAllByDocument(documentService.getDocumentById(documentId))
                                 .stream()
                                 .filter(detail -> detail.getDetailStatus().getName().equals("VALIDATED"))
                                 .count();
+                }
+                else {
+                        if (document.getDocumentType().contains("video")){
+                                return documentService.getAllDocumentWithName(document.getName())
+                                        .stream()
+                                        .map(Document::getId)
+                                        .map(id-> documentDetailRepository.findAllByDocument(documentService.getDocumentById(id)).size())
+                                        .reduce(0, Integer::sum);
+                        }
+                }
+                return 0;
         }
 
         public List<ImageDetailDto> getAllNewDetailDocumentForValidation() {
