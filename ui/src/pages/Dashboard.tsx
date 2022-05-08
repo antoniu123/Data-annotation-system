@@ -66,7 +66,7 @@ const Dashboard: React.VFC = () => {
                         .sort((a,b)=>a.id-b.id)
                         .map((document, index) => (                        
                           <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>
-                            <ImageCard key={index} id={document.id} title={document.name} urlImage={urlImage(document.id)} /> 
+                            <ImageCard key={index} id={document.id} title={document.name} urlImage={urlImage(document.id)} refresh={()=>send({type: 'RETRY'})}/>
                           </Col>                        
                       ))}
                      </Row>

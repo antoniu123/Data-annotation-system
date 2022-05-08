@@ -21,11 +21,12 @@ interface VideoCardProps {
 const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlVideo , refresh}) => {
 
     const [displayModal, setDisplayModal] = useState(false)
+
     const [cnt, setCnt] = useState(0)
 
-    const textUrl = `http://${process.env.REACT_APP_SERVER_NAME}/document/${id}/count`
-
     useEffect(() => {
+        const textUrl = `http://${process.env.REACT_APP_SERVER_NAME}/document/${id}/count`
+
         const getText = async () => {
             const result = await axios.get(textUrl)
                 .then(response => response)
@@ -37,11 +38,11 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
         };
 
         getText()
-    },[]);
+    },[id]);
 
 
     const [form] = Form.useForm();
-    const extract = async (id:number, nrFrames:number) => {
+    const extract = (id:number, nrFrames:number) => {
       const token = JSON.parse(window.localStorage.getItem("jwt") ?? "")
       const config = {
         headers: {
@@ -56,7 +57,7 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
       const data = {}
   
       const url = `http://${process.env.REACT_APP_SERVER_NAME}/video/extract/${order}`
-      await axios.post(url, data, config)
+      axios.post(url, data, config)
       .then(response => { 
         console.error(response) 
         return response
@@ -65,6 +66,7 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
           console.error(err) 
           return err
       })
+      setTimeout(()=>refresh(), 500);
     };
 
 

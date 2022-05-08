@@ -8,15 +8,15 @@ interface ImageCardProps {
     title: string
     urlImage: string
     id: number
+    refresh: ()=> void
 }
-const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage }) => {
+const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage , refresh}) => {
     const [tagsVisible, setTagsVisible] = useState(false)   
 
     const [cnt, setCnt] = useState(0)
 
-    const textUrl = `http://${process.env.REACT_APP_SERVER_NAME}/document/${id}/count`
-    
     useEffect(() => {
+        const textUrl = `http://${process.env.REACT_APP_SERVER_NAME}/document/${id}/count`
         const getText = async () => {
             const result = await axios.get(textUrl)
             .then(response => response)
@@ -28,7 +28,7 @@ const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage }) => {
         };
 
         getText()
-    },[]);
+    },[id]);
 
     return (
       <>
@@ -56,7 +56,10 @@ const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage }) => {
         </div>
         { tagsVisible ?
         <TagImage docId={id} urlImage={urlImage} visible={tagsVisible} onClose={()=>setTagsVisible(false)} 
-           onRefresh={(cnt:number)=> setCnt(cnt)}/> : null}
+           onRefresh={(cnt:number)=> {
+               setCnt(cnt)
+               refresh()
+           }}/> : null}
       </>
     );
   };

@@ -137,7 +137,9 @@ const Projects: React.VFC = () => {
             key: 'document',
             sorter: (a: ProjectDetail, b: ProjectDetail) => a.document.id - b.document.id,
             render: (value: File) => <ImageCard key={value.id} id={value.id} title={value.name}
-                                                urlImage={url(value.id)}/>,
+                                                urlImage={url(value.id)} refresh={()=>send({
+                type: 'RETRY'
+            })}/>,
             width: '20px'
         },
         {
