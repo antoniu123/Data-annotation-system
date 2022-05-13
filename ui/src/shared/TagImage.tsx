@@ -36,6 +36,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
     const {Option} = Select;
 
     const [formTag] = Form.useForm()
+    const [formMove] = Form.useForm()
 
     const [tagState, send] = useMachine(createTagImageMachine(docId))
 
@@ -43,110 +44,111 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
 
     const [addEditVisible, setAddEditVisible] = useState(false);
 
+    const [moveVisible, setMoveVisible] = useState(false);
+
     const [markers, setMarkers] = useState<Array<Marker>>([]);
 
     const [newImageDetails, setNewImageDetails] = useState<Array<ImageDetail>>([]);
 
     const drawLines = (imageDetails: ImageDetail[], str: string) => {
         let x: ReactElement[] = []
-        if (imageDetails.map(detail=>detail.name).filter(name=>name !== '-').length> 0 ) { // normal loading
+        if (imageDetails.map(detail => detail.name).filter(name => name !== '-').length > 0) { // normal loading
             if (imageDetails.filter(e => e.name === "1-Head").length > 0 && imageDetails.filter(e => e.name === "2-Neck").length > 0) {
                 x[0] = <LineTo delay={500} borderColor="red" from={`0`} to={`1`} within={str}/>
             }
             if (imageDetails.filter(e => e.name === "2-Neck").length > 0 && imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0) {
                 x[1] = <LineTo delay={500} borderColor="red" from={`1`} to={`2`}
-                             within={str}/>
+                               within={str}/>
             }
             if (imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e => e.name === "4-ShoulderLeft").length > 0) {
-                x[2]= <LineTo delay={500} borderColor="red" from={`2`} to={`3`}
-                             within={str}/>
+                x[2] = <LineTo delay={500} borderColor="red" from={`2`} to={`3`}
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e=>e.name === "5-ShoulderRight").length > 0){
+            if (imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e => e.name === "5-ShoulderRight").length > 0) {
                 x[3] = <LineTo delay={500} borderColor="red" from={`2`} to={`4`}
-                             within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e=>e.name === "16-SpineMid").length > 0){
+            if (imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e => e.name === "16-SpineMid").length > 0) {
                 x[4] = <LineTo delay={500} borderColor="red" from={`2`} to={`15`}
-                             within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "4-ShoulderLeft").length > 0 && imageDetails.filter(e=>e.name === "6-ElbowLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "4-ShoulderLeft").length > 0 && imageDetails.filter(e => e.name === "6-ElbowLeft").length > 0) {
                 x[5] = <LineTo delay={500} borderColor="red" from={`3`} to={`5`}
-                             within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "6-ElbowLeft").length > 0 && imageDetails.filter(e=>e.name === "8-WristLeft").length > 0){
-                x[6] =  <LineTo delay={500} borderColor="red" from={`5`} to={`7`}
-                              within = {str}/>
+            if (imageDetails.filter(e => e.name === "6-ElbowLeft").length > 0 && imageDetails.filter(e => e.name === "8-WristLeft").length > 0) {
+                x[6] = <LineTo delay={500} borderColor="red" from={`5`} to={`7`}
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "8-WristLeft").length > 0 && imageDetails.filter(e=>e.name === "10-ThumbLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "8-WristLeft").length > 0 && imageDetails.filter(e => e.name === "10-ThumbLeft").length > 0) {
                 x[7] = <LineTo delay={500} borderColor="red" from={`7`} to={`9`}
-                             within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "8-WristLeft").length > 0 && imageDetails.filter(e=>e.name === "12-HandLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "8-WristLeft").length > 0 && imageDetails.filter(e => e.name === "12-HandLeft").length > 0) {
                 x[8] = <LineTo delay={500} borderColor="red" from={`7`} to={`11`}
-                             within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "12-HandLeft").length > 0 && imageDetails.filter(e=>e.name === "14-HandTipLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "12-HandLeft").length > 0 && imageDetails.filter(e => e.name === "14-HandTipLeft").length > 0) {
                 x[9] = <LineTo delay={500} borderColor="red" from={`11`} to={`13`}
-                              within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "5-ShoulderRight").length > 0 && imageDetails.filter(e=>e.name === "7-ElbowRight").length > 0){
+            if (imageDetails.filter(e => e.name === "5-ShoulderRight").length > 0 && imageDetails.filter(e => e.name === "7-ElbowRight").length > 0) {
                 x[10] = <LineTo delay={500} borderColor="red" from={`4`} to={`6`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "7-ElbowRight").length > 0 && imageDetails.filter(e=>e.name === "9-WristRight").length > 0){
+            if (imageDetails.filter(e => e.name === "7-ElbowRight").length > 0 && imageDetails.filter(e => e.name === "9-WristRight").length > 0) {
                 x[11] = <LineTo delay={500} borderColor="red" from={`6`} to={`8`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "9-WristRight").length > 0 && imageDetails.filter(e=>e.name === "11-ThumbRight").length > 0){
+            if (imageDetails.filter(e => e.name === "9-WristRight").length > 0 && imageDetails.filter(e => e.name === "11-ThumbRight").length > 0) {
                 x[12] = <LineTo delay={500} borderColor="red" from={`8`} to={`10`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "9-WristRight").length > 0 && imageDetails.filter(e=>e.name === "13-HandRight").length > 0){
+            if (imageDetails.filter(e => e.name === "9-WristRight").length > 0 && imageDetails.filter(e => e.name === "13-HandRight").length > 0) {
                 x[13] = <LineTo delay={500} borderColor="red" from={`8`} to={`12`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "13-HandRight").length > 0 && imageDetails.filter(e=>e.name === "15-HandTipRight").length > 0){
+            if (imageDetails.filter(e => e.name === "13-HandRight").length > 0 && imageDetails.filter(e => e.name === "15-HandTipRight").length > 0) {
                 x[14] = <LineTo delay={500} borderColor="red" from={`12`} to={`14`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "16-SpineMid").length > 0 && imageDetails.filter(e=>e.name === "17-SpineBase").length > 0){
+            if (imageDetails.filter(e => e.name === "16-SpineMid").length > 0 && imageDetails.filter(e => e.name === "17-SpineBase").length > 0) {
                 x[15] = <LineTo delay={500} borderColor="red" from={`15`} to={`16`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "17-SpineBase").length > 0 && imageDetails.filter(e=>e.name === "18-HipLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "17-SpineBase").length > 0 && imageDetails.filter(e => e.name === "18-HipLeft").length > 0) {
                 x[16] = <LineTo delay={500} borderColor="red" from={`16`} to={`17`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "17-SpineBase").length > 0 && imageDetails.filter(e=>e.name === "19-HipRight").length > 0){
-                x[17] =  <LineTo delay={500} borderColor="red" from={`16`} to={`18`}
-                               within = {str}/>
+            if (imageDetails.filter(e => e.name === "17-SpineBase").length > 0 && imageDetails.filter(e => e.name === "19-HipRight").length > 0) {
+                x[17] = <LineTo delay={500} borderColor="red" from={`16`} to={`18`}
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "18-HipLeft").length > 0 && imageDetails.filter(e=>e.name === "20-KneeLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "18-HipLeft").length > 0 && imageDetails.filter(e => e.name === "20-KneeLeft").length > 0) {
                 x[18] = <LineTo delay={500} borderColor="red" from={`17`} to={`19`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "19-HipRight").length > 0 && imageDetails.filter(e=>e.name === "21-KneeRight").length > 0){
+            if (imageDetails.filter(e => e.name === "19-HipRight").length > 0 && imageDetails.filter(e => e.name === "21-KneeRight").length > 0) {
                 x[19] = <LineTo delay={500} borderColor="red" from={`18`} to={`20`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "20-KneeLeft").length > 0 && imageDetails.filter(e=>e.name === "22-AnkleLeft").length > 0){
+            if (imageDetails.filter(e => e.name === "20-KneeLeft").length > 0 && imageDetails.filter(e => e.name === "22-AnkleLeft").length > 0) {
                 x[20] = <LineTo delay={500} borderColor="red" from={`19`} to={`21`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "22-AnkleLeft").length > 0 && imageDetails.filter(e=>e.name === "24-FootLeft").length > 0){
-                x[21] =  <LineTo delay={500} borderColor="red" from={`21`} to={`23`}
-                               within = {str}/>
+            if (imageDetails.filter(e => e.name === "22-AnkleLeft").length > 0 && imageDetails.filter(e => e.name === "24-FootLeft").length > 0) {
+                x[21] = <LineTo delay={500} borderColor="red" from={`21`} to={`23`}
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "21-KneeRight").length > 0 && imageDetails.filter(e=>e.name === "23-AnkleRight").length > 0){
+            if (imageDetails.filter(e => e.name === "21-KneeRight").length > 0 && imageDetails.filter(e => e.name === "23-AnkleRight").length > 0) {
                 x[22] = <LineTo delay={500} borderColor="red" from={`20`} to={`22`}
-                              within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.filter(e=>e.name === "23-AnkleRight").length > 0 && imageDetails.filter(e=>e.name === "25-FootRight").length > 0){
+            if (imageDetails.filter(e => e.name === "23-AnkleRight").length > 0 && imageDetails.filter(e => e.name === "25-FootRight").length > 0) {
                 x[23] = <LineTo delay={500} borderColor="red" from={`22`} to={`24`}
-                              within = {str}/>
+                                within={str}/>
             }
-        }
-        else { //csv loading
+        } else { //csv loading
             if (imageDetails.length > 2 && imageDetails[0] !== undefined && imageDetails[1] !== undefined) {
                 x[0] = <LineTo delay={500} borderColor="red" from={`0`} to={`1`} within={str}/>
             }
@@ -155,95 +157,95 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                                within={str}/>
             }
             if (imageDetails.length > 4 && imageDetails[2] !== undefined && imageDetails[3] !== undefined) {
-                x[2]= <LineTo delay={500} borderColor="red" from={`2`} to={`3`}
-                              within={str}/>
+                x[2] = <LineTo delay={500} borderColor="red" from={`2`} to={`3`}
+                               within={str}/>
             }
-            if (imageDetails.length > 5 && imageDetails[2] !== undefined && imageDetails[4] !== undefined){
+            if (imageDetails.length > 5 && imageDetails[2] !== undefined && imageDetails[4] !== undefined) {
                 x[3] = <LineTo delay={500} borderColor="red" from={`2`} to={`4`}
-                               within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.length > 6 && imageDetails[2] !== undefined && imageDetails[5] !== undefined){
+            if (imageDetails.length > 6 && imageDetails[2] !== undefined && imageDetails[5] !== undefined) {
                 x[4] = <LineTo delay={500} borderColor="red" from={`2`} to={`15`}
-                               within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.length > 7 && imageDetails[3] !== undefined && imageDetails[5] !== undefined){
+            if (imageDetails.length > 7 && imageDetails[3] !== undefined && imageDetails[5] !== undefined) {
                 x[5] = <LineTo delay={500} borderColor="red" from={`3`} to={`5`}
-                               within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.length > 8 && imageDetails[5] !== undefined && imageDetails[7] !== undefined){
-                x[6] =  <LineTo delay={500} borderColor="red" from={`5`} to={`7`}
-                                within = {str}/>
+            if (imageDetails.length > 8 && imageDetails[5] !== undefined && imageDetails[7] !== undefined) {
+                x[6] = <LineTo delay={500} borderColor="red" from={`5`} to={`7`}
+                               within={str}/>
             }
-            if (imageDetails.length > 9 && imageDetails[7] !== undefined && imageDetails[9] !== undefined){
+            if (imageDetails.length > 9 && imageDetails[7] !== undefined && imageDetails[9] !== undefined) {
                 x[7] = <LineTo delay={500} borderColor="red" from={`7`} to={`9`}
-                               within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.length > 10 && imageDetails[7] !== undefined && imageDetails[11] !== undefined){
+            if (imageDetails.length > 10 && imageDetails[7] !== undefined && imageDetails[11] !== undefined) {
                 x[8] = <LineTo delay={500} borderColor="red" from={`7`} to={`11`}
-                               within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.length > 11 && imageDetails[11] !== undefined && imageDetails[13] !== undefined){
+            if (imageDetails.length > 11 && imageDetails[11] !== undefined && imageDetails[13] !== undefined) {
                 x[9] = <LineTo delay={500} borderColor="red" from={`11`} to={`13`}
-                               within = {str}/>
+                               within={str}/>
             }
-            if (imageDetails.length > 12 && imageDetails[4] !== undefined && imageDetails[6] !== undefined){
+            if (imageDetails.length > 12 && imageDetails[4] !== undefined && imageDetails[6] !== undefined) {
                 x[10] = <LineTo delay={500} borderColor="red" from={`4`} to={`6`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 13 && imageDetails[6] !== undefined && imageDetails[8] !== undefined){
+            if (imageDetails.length > 13 && imageDetails[6] !== undefined && imageDetails[8] !== undefined) {
                 x[11] = <LineTo delay={500} borderColor="red" from={`6`} to={`8`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 14 && imageDetails[8] !== undefined && imageDetails[10] !== undefined){
+            if (imageDetails.length > 14 && imageDetails[8] !== undefined && imageDetails[10] !== undefined) {
                 x[12] = <LineTo delay={500} borderColor="red" from={`8`} to={`10`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 15 && imageDetails[8] !== undefined && imageDetails[12] !== undefined){
+            if (imageDetails.length > 15 && imageDetails[8] !== undefined && imageDetails[12] !== undefined) {
                 x[13] = <LineTo delay={500} borderColor="red" from={`8`} to={`12`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 16 && imageDetails[12] !== undefined && imageDetails[14] !== undefined){
+            if (imageDetails.length > 16 && imageDetails[12] !== undefined && imageDetails[14] !== undefined) {
                 x[14] = <LineTo delay={500} borderColor="red" from={`12`} to={`14`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 17 && imageDetails[15] !== undefined && imageDetails[16] !== undefined){
+            if (imageDetails.length > 17 && imageDetails[15] !== undefined && imageDetails[16] !== undefined) {
                 x[15] = <LineTo delay={500} borderColor="red" from={`15`} to={`16`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 18 && imageDetails[16] !== undefined && imageDetails[17] !== undefined){
+            if (imageDetails.length > 18 && imageDetails[16] !== undefined && imageDetails[17] !== undefined) {
                 x[16] = <LineTo delay={500} borderColor="red" from={`16`} to={`17`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 19 && imageDetails[16] !== undefined && imageDetails[18] !== undefined){
-                x[17] =  <LineTo delay={500} borderColor="red" from={`16`} to={`18`}
-                                 within = {str}/>
+            if (imageDetails.length > 19 && imageDetails[16] !== undefined && imageDetails[18] !== undefined) {
+                x[17] = <LineTo delay={500} borderColor="red" from={`16`} to={`18`}
+                                within={str}/>
             }
-            if (imageDetails.length > 20 && imageDetails[17] !== undefined && imageDetails[19] !== undefined){
+            if (imageDetails.length > 20 && imageDetails[17] !== undefined && imageDetails[19] !== undefined) {
                 x[18] = <LineTo delay={500} borderColor="red" from={`17`} to={`19`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 21 && imageDetails[18] !== undefined && imageDetails[20] !== undefined){
+            if (imageDetails.length > 21 && imageDetails[18] !== undefined && imageDetails[20] !== undefined) {
                 x[19] = <LineTo delay={500} borderColor="red" from={`18`} to={`20`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 22 && imageDetails[19] !== undefined && imageDetails[21] !== undefined){
+            if (imageDetails.length > 22 && imageDetails[19] !== undefined && imageDetails[21] !== undefined) {
                 x[20] = <LineTo delay={500} borderColor="red" from={`19`} to={`21`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 23 && imageDetails[21] !== undefined && imageDetails[23] !== undefined){
-                x[21] =  <LineTo delay={500} borderColor="red" from={`21`} to={`23`}
-                                 within = {str}/>
+            if (imageDetails.length > 23 && imageDetails[21] !== undefined && imageDetails[23] !== undefined) {
+                x[21] = <LineTo delay={500} borderColor="red" from={`21`} to={`23`}
+                                within={str}/>
             }
-            if (imageDetails.length > 24 && imageDetails[20] !== undefined && imageDetails[22] !== undefined){
+            if (imageDetails.length > 24 && imageDetails[20] !== undefined && imageDetails[22] !== undefined) {
                 x[22] = <LineTo delay={500} borderColor="red" from={`20`} to={`22`}
-                                within = {str}/>
+                                within={str}/>
             }
-            if (imageDetails.length > 25 && imageDetails[22] !== undefined && imageDetails[24] !== undefined){
+            if (imageDetails.length > 25 && imageDetails[22] !== undefined && imageDetails[24] !== undefined) {
                 x[23] = <LineTo delay={500} borderColor="red" from={`22`} to={`24`}
-                                within = {str}/>
+                                within={str}/>
             }
         }
-        return <>{x.map((currentValue, index, arr)=> currentValue)}</>
+        return <>{x.map((currentValue, index, arr) => currentValue)}</>
     }
 
     const CustomMarker = (props: MarkerComponentProps) => {
@@ -317,11 +319,27 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                     }
                 }> Delete </Button>
             )
+        },
+        {
+            title: 'Move',
+            key: 'move',
+            render: (record: ImageDetail) => (
+                <Button type="primary" onClick={
+                    () => {
+                        send({
+                            type: 'MOVE', payload: {documentDetail: record}
+                        })
+                        setMoveVisible(true)
+                    }
+                }> Move </Button>
+            )
         }
     ];
     return (
         <div>
-            <Match on={['loadingDocumentDetails', 'deletingDocumentDetail']} state={tagState}>
+            <Match
+                on={['loadingDocumentDetails', 'deletingDocumentDetail', 'movingDocumentDetail', 'savingDocumentsDetails']}
+                state={tagState}>
                 <Spin>
                     <Alert message="Please wait for loading" type="info"/>
                 </Spin>
@@ -333,6 +351,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                     <div
                         onClick={() => setAddEditVisible(true)}
                         className="abc" onLoad={putMarkers}>
+                        {/*Image zone*/}
                         <ImageMarker
                             src={urlImage}
                             markers={markers}
@@ -351,22 +370,28 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                             }}
                             markerComponent={CustomMarker}
                         />
-                        {/*{markers.map((marker, index, array) => (*/}
-                        {/*    <>*/}
-                        {/*        {index > 0 && (*/}
-                        {/*            <LineTo delay={500} borderColor="red" from={`${index - 1}`} to={`${index}`}*/}
-                        {/*                    within="abc"/>*/}
-                        {/*        )}*/}
-                        {/*    </>*/}
-                        {/*))*/}
-                        {/*}*/}
-                        {/*{markers.length > 2 && (*/}
-                        {/*    <LineTo delay={500} borderColor="red" from="0" to={`${markers.length - 1}`} within="abc"/>*/}
-                        {/*)}*/}
-
                         <>{drawLines(tagState.context.documentDetails, "abc")}</>
-
                     </div>
+                    {/*Records detail zone */}
+                    <Card title="These are our tag records data" bordered={true}
+                          style={{width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.0)'}}
+                        // actions={[<Button type="primary" onClick={
+                        //     () => {
+                        //         setAddEditVisible(true)
+                        //     }
+                        // } disabled={newImageDetails.length === 0}>Add
+                        // </Button>]}
+                    >
+                        <>
+                            {tagState.context.documentDetails.length > 0 ?
+                                <Table rowKey="id"
+                                       dataSource={tagState.context.documentDetails.sort((a, b) => a.id - b.id)}
+                                       columns={columns}
+                                       size="small"/> :
+                                null}
+                        </>
+                    </Card>
+                    {/*Editing detail zone*/}
                     <Modal className="w-3/12" visible={addEditVisible} onCancel={() => setAddEditVisible(false)}
                            width={400}
                            maskClosable={false}
@@ -427,75 +452,59 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                                 </Form.Item>
                             </Form>
                         </Space>
-                        {/*<Form className="px-24" name="dynamic_form_item" {...formItemLayoutWithOutLabel}*/}
-                        {/*      onFinish={onFinish} autoComplete="off">*/}
-                        {/*    <br/>*/}
-                        {/*<Form.List name="items" initialValue={newImageDetails}>*/}
-                        {/*    {(fields, {add, remove}) => (*/}
-                        {/*        <>*/}
-                        {/*            {fields.map((field) => (*/}
-                        {/*                <div>*/}
-                        {/*                    <Space*/}
-                        {/*                        key={field.key}*/}
-                        {/*                        style={{display: "flex", marginBottom: 8}}*/}
-                        {/*                        align="baseline"*/}
-                        {/*                    >*/}
-                        {/*                        <Form.Item*/}
-                        {/*                            {...field}*/}
-                        {/*                            name={[field.name, "name"]}*/}
-                        {/*                            fieldKey={[field.fieldKey, "name"]}*/}
-                        {/*                            rules={[{required: true}]}*/}
-                        {/*                        >*/}
-                        {/*                            <Input placeholder="name"/>*/}
-                        {/*                        </Form.Item>*/}
-                        {/*                        <Form.Item*/}
-                        {/*                            {...field}*/}
-                        {/*                            name={[field.name, "description"]}*/}
-                        {/*                            fieldKey={[field.fieldKey, "description"]}*/}
-                        {/*                            rules={[{required: true}]}*/}
-                        {/*                        >*/}
-                        {/*                            <Input placeholder="description"/>*/}
-                        {/*                        </Form.Item>*/}
-                        {/*                    </Space>*/}
-                        {/*                </div>*/}
-                        {/*            ))}*/}
-                        {/*        </>*/}
-                        {/*    )}*/}
-                        {/*</Form.List>*/}
-                        {/*    <Form.Item>*/}
-                        {/*            <Card className="pr-16" bordered={false}*/}
-                        {/*                  style={{ backgroundColor: 'rgba(255, 255, 255, 0.0)'}}*/}
-                        {/*                  actions={[<Button type="primary" htmlType="submit">*/}
-                        {/*                      Save*/}
-                        {/*                  </Button>]}/>*/}
-                        {/*    </Form.Item>*/}
-                        {/*</Form>*/}
-
-
                     </Modal>
-                    <Card title="These are our tag records data" bordered={true}
-                          style={{width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.0)'}}
-                        // actions={[<Button type="primary" onClick={
-                        //     () => {
-                        //         setAddEditVisible(true)
-                        //     }
-                        // } disabled={newImageDetails.length === 0}>Add
-                        // </Button>]}
-                    >
-                        <>
-                            {tagState.context.documentDetails.length > 0 ?
-                                <Table rowKey="id" dataSource={tagState.context.documentDetails.sort((a,b)=>a.id-b.id)} columns={columns}
-                                       size="small"/> :
-                                null}
-                        </>
-                    </Card>
-                    {/* <AddEditTag key={documentDetailId}
-                                  truckId={documentDetailId}
-                                  visible={addEditVisible}
-                                  onSubmit={() => setAddEditVisible(false)}
-                                  onCancel={() => setAddEditVisible(false)}
-                                  onRefresh={() => refresh()}
-                    /> */}
+                </Modal>
+            </Match>
+
+            <Match on={['moveDocumentDetail']} state={tagState}>
+                {/*Moving zone*/}
+                <Modal visible={moveVisible} closable={true} maskClosable={false}
+                       onOk={() => {
+                           let myDetail: ImageDetail = {} as ImageDetail
+                           if (tagState.context.currentDetailForMoving) {
+                               myDetail = {
+                                   ...tagState.context.currentDetailForMoving,
+                                   x: formMove.getFieldValue('x') as number,
+                                   y: formMove.getFieldValue('y') as number
+                               }
+                               send({type: 'DO_MOVE', payload: {documentDetail: myDetail}})
+                               formMove.resetFields()
+                               setMoveVisible(false)
+                               onRefresh(tagState.context.documentDetails.length)
+                           }
+                       }}
+                       onCancel={() => {
+                           send({type: 'CANCEL_MOVE'})
+                           formMove.resetFields()
+                           setMoveVisible(false)
+                           onRefresh(tagState.context.documentDetails.length)
+                       }}
+                >
+                    <div style={{
+                        padding: '40px'
+                    }}>
+                        <Form form={formMove} >
+                            <Form.Item
+                                key="x"
+                                label="X"
+                                name="x"
+                                initialValue={tagState.context.currentDetailForMoving?.x}
+                                rules={[{required: true, message: 'Please input x'}]}
+                            >
+                                <Input width={100}/>
+                            </Form.Item>
+
+                            <Form.Item
+                                key="y"
+                                label="Y"
+                                name="y"
+                                initialValue={tagState.context.currentDetailForMoving?.y}
+                                rules={[{required: true, message: 'Please input y'}]}
+                            >
+                                <Input width={100}/>
+                            </Form.Item>
+                        </Form>
+                    </div>
                 </Modal>
             </Match>
 
@@ -521,6 +530,7 @@ export default TagImage
 interface TagImageMachineContext {
     documentDetails: ImageDetail[]
     markers: Marker[]
+    currentDetailForMoving?: ImageDetail
 }
 
 interface TagImageMachineSchema {
@@ -530,12 +540,17 @@ interface TagImageMachineSchema {
         loadResolved: {}
         loadRejected: {}
         deletingDocumentDetail: {}
+        moveDocumentDetail: {}
+        movingDocumentDetail: {}
         savingDocumentsDetails: {}
     }
 }
 
 type TagImageMachineEvent = | { type: 'RETRY' } |
     { type: 'DELETE'; payload: { documentDetailId: number } } |
+    { type: 'MOVE'; payload: { documentDetail: ImageDetail } } |
+    { type: 'CANCEL_MOVE' } |
+    { type: 'DO_MOVE'; payload: { documentDetail: ImageDetail } } |
     { type: 'SAVE'; payload: { documentDetails: ImageDetail[] } }
 
 const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext, TagImageMachineSchema, TagImageMachineEvent>(
@@ -556,8 +571,8 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                         actions: assign((context, event) => {
                             if (event.data.data)
                                 return {
-                                    documentDetails: event.data.data.sort((a:ImageDetail,b:ImageDetail)=>a.id-b.id),
-                                    markers: event.data.data.sort((a:ImageDetail,b:ImageDetail)=>a.id-b.id).map((detail: ImageDetail) => {
+                                    documentDetails: event.data.data.sort((a: ImageDetail, b: ImageDetail) => a.id - b.id),
+                                    markers: event.data.data.sort((a: ImageDetail, b: ImageDetail) => a.id - b.id).map((detail: ImageDetail) => {
                                         return {left: detail.x, top: detail.y} as Marker
                                     })
                                 }
@@ -582,6 +597,9 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                     DELETE: {
                         target: 'deletingDocumentDetail'
                     },
+                    MOVE: {
+                        target: 'moveDocumentDetail'
+                    },
                     SAVE: {
                         target: 'savingDocumentsDetails'
                     }
@@ -600,6 +618,39 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                     src: 'deleteDetailData',
                     onDone: {
                         target: 'loadingDocumentDetails'
+                    },
+                    onError: {
+                        target: 'loadingDocumentDetails'
+                    }
+                }
+            },
+            moveDocumentDetail: {
+                entry: assign((context, event) => {
+                    return {
+                        ...context,
+                        currentDetailForMoving: event.type === 'MOVE' ? event.payload.documentDetail : undefined as unknown as ImageDetail
+                    }
+                }),
+                on: {
+                    CANCEL_MOVE: {
+                        target: 'loadResolved'
+                    },
+                    DO_MOVE: {
+                        target: 'movingDocumentDetail'
+                    }
+                }
+            },
+            movingDocumentDetail: {
+                invoke: {
+                    src: 'saveSingleDocumentDetail',
+                    onDone: {
+                        target: 'loadingDocumentDetails',
+                        actions: assign((context, event) => {
+                            return {
+                                ...context,
+                                currentDetailForMoving: undefined as unknown as ImageDetail
+                            }
+                        })
                     },
                     onError: {
                         target: 'loadingDocumentDetails'
@@ -637,6 +688,13 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                 if (event.type === 'SAVE')
                     return axios.post(`http://${process.env.REACT_APP_SERVER_NAME}/document/${docId}/detail`,
                         event.payload.documentDetails, {headers: {'Authorization': `Bearer ${token}`}})
+                return Promise.reject(() => "incorect type of event")
+            },
+            saveSingleDocumentDetail: (id, event) => {
+                const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
+                if (event.type === 'DO_MOVE')
+                    return axios.post(`http://${process.env.REACT_APP_SERVER_NAME}/document/${docId}/detail`,
+                        [event.payload.documentDetail], {headers: {'Authorization': `Bearer ${token}`}})
                 return Promise.reject(() => "incorect type of event")
             }
         }
