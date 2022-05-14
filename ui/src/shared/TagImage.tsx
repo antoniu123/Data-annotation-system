@@ -44,7 +44,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
 
     const [addEditVisible, setAddEditVisible] = useState(false);
 
-    const [moveVisible, setMoveVisible] = useState(false);
+    // const [moveVisible, setMoveVisible] = useState(false);
 
     const [markers, setMarkers] = useState<Array<Marker>>([]);
 
@@ -54,194 +54,194 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
         let x: ReactElement[] = []
         if (imageDetails.map(detail => detail.name).filter(name => name !== '-').length > 0) { // normal loading
             if (imageDetails.filter(e => e.name === "1-Head").length > 0 && imageDetails.filter(e => e.name === "2-Neck").length > 0) {
-                x[0] = <LineTo delay={500} borderColor="red" from={`0`} to={`1`} within={str}/>
+                x[0] = <LineTo key="0" delay={500} borderColor="red" from={`0`} to={`1`} within={str}/>
             }
             if (imageDetails.filter(e => e.name === "2-Neck").length > 0 && imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0) {
-                x[1] = <LineTo delay={500} borderColor="red" from={`1`} to={`2`}
+                x[1] = <LineTo key="1" delay={500} borderColor="red" from={`1`} to={`2`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e => e.name === "4-ShoulderLeft").length > 0) {
-                x[2] = <LineTo delay={500} borderColor="red" from={`2`} to={`3`}
+                x[2] = <LineTo key="2" delay={500} borderColor="red" from={`2`} to={`3`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e => e.name === "5-ShoulderRight").length > 0) {
-                x[3] = <LineTo delay={500} borderColor="red" from={`2`} to={`4`}
+                x[3] = <LineTo key="3" delay={500} borderColor="red" from={`2`} to={`4`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "3-SpineShoulder").length > 0 && imageDetails.filter(e => e.name === "16-SpineMid").length > 0) {
-                x[4] = <LineTo delay={500} borderColor="red" from={`2`} to={`15`}
+                x[4] = <LineTo key="4" delay={500} borderColor="red" from={`2`} to={`15`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "4-ShoulderLeft").length > 0 && imageDetails.filter(e => e.name === "6-ElbowLeft").length > 0) {
-                x[5] = <LineTo delay={500} borderColor="red" from={`3`} to={`5`}
+                x[5] = <LineTo key="5" delay={500} borderColor="red" from={`3`} to={`5`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "6-ElbowLeft").length > 0 && imageDetails.filter(e => e.name === "8-WristLeft").length > 0) {
-                x[6] = <LineTo delay={500} borderColor="red" from={`5`} to={`7`}
+                x[6] = <LineTo key="6" delay={500} borderColor="red" from={`5`} to={`7`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "8-WristLeft").length > 0 && imageDetails.filter(e => e.name === "10-ThumbLeft").length > 0) {
-                x[7] = <LineTo delay={500} borderColor="red" from={`7`} to={`9`}
+                x[7] = <LineTo key="7" delay={500} borderColor="red" from={`7`} to={`9`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "8-WristLeft").length > 0 && imageDetails.filter(e => e.name === "12-HandLeft").length > 0) {
-                x[8] = <LineTo delay={500} borderColor="red" from={`7`} to={`11`}
+                x[8] = <LineTo key="8" delay={500} borderColor="red" from={`7`} to={`11`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "12-HandLeft").length > 0 && imageDetails.filter(e => e.name === "14-HandTipLeft").length > 0) {
-                x[9] = <LineTo delay={500} borderColor="red" from={`11`} to={`13`}
+                x[9] = <LineTo key="9" delay={500} borderColor="red" from={`11`} to={`13`}
                                within={str}/>
             }
             if (imageDetails.filter(e => e.name === "5-ShoulderRight").length > 0 && imageDetails.filter(e => e.name === "7-ElbowRight").length > 0) {
-                x[10] = <LineTo delay={500} borderColor="red" from={`4`} to={`6`}
+                x[10] = <LineTo key="10" delay={500} borderColor="red" from={`4`} to={`6`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "7-ElbowRight").length > 0 && imageDetails.filter(e => e.name === "9-WristRight").length > 0) {
-                x[11] = <LineTo delay={500} borderColor="red" from={`6`} to={`8`}
+                x[11] = <LineTo key="11" delay={500} borderColor="red" from={`6`} to={`8`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "9-WristRight").length > 0 && imageDetails.filter(e => e.name === "11-ThumbRight").length > 0) {
-                x[12] = <LineTo delay={500} borderColor="red" from={`8`} to={`10`}
+                x[12] = <LineTo key="12" delay={500} borderColor="red" from={`8`} to={`10`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "9-WristRight").length > 0 && imageDetails.filter(e => e.name === "13-HandRight").length > 0) {
-                x[13] = <LineTo delay={500} borderColor="red" from={`8`} to={`12`}
+                x[13] = <LineTo key="13" delay={500} borderColor="red" from={`8`} to={`12`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "13-HandRight").length > 0 && imageDetails.filter(e => e.name === "15-HandTipRight").length > 0) {
-                x[14] = <LineTo delay={500} borderColor="red" from={`12`} to={`14`}
+                x[14] = <LineTo key="14" delay={500} borderColor="red" from={`12`} to={`14`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "16-SpineMid").length > 0 && imageDetails.filter(e => e.name === "17-SpineBase").length > 0) {
-                x[15] = <LineTo delay={500} borderColor="red" from={`15`} to={`16`}
+                x[15] = <LineTo key="15" delay={500} borderColor="red" from={`15`} to={`16`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "17-SpineBase").length > 0 && imageDetails.filter(e => e.name === "18-HipLeft").length > 0) {
-                x[16] = <LineTo delay={500} borderColor="red" from={`16`} to={`17`}
+                x[16] = <LineTo key="16" delay={500} borderColor="red" from={`16`} to={`17`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "17-SpineBase").length > 0 && imageDetails.filter(e => e.name === "19-HipRight").length > 0) {
-                x[17] = <LineTo delay={500} borderColor="red" from={`16`} to={`18`}
+                x[17] = <LineTo key="17" delay={500} borderColor="red" from={`16`} to={`18`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "18-HipLeft").length > 0 && imageDetails.filter(e => e.name === "20-KneeLeft").length > 0) {
-                x[18] = <LineTo delay={500} borderColor="red" from={`17`} to={`19`}
+                x[18] = <LineTo key="18" delay={500} borderColor="red" from={`17`} to={`19`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "19-HipRight").length > 0 && imageDetails.filter(e => e.name === "21-KneeRight").length > 0) {
-                x[19] = <LineTo delay={500} borderColor="red" from={`18`} to={`20`}
+                x[19] = <LineTo key="19" delay={500} borderColor="red" from={`18`} to={`20`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "20-KneeLeft").length > 0 && imageDetails.filter(e => e.name === "22-AnkleLeft").length > 0) {
-                x[20] = <LineTo delay={500} borderColor="red" from={`19`} to={`21`}
+                x[20] = <LineTo key="20" delay={500} borderColor="red" from={`19`} to={`21`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "22-AnkleLeft").length > 0 && imageDetails.filter(e => e.name === "24-FootLeft").length > 0) {
-                x[21] = <LineTo delay={500} borderColor="red" from={`21`} to={`23`}
+                x[21] = <LineTo key="21" delay={500} borderColor="red" from={`21`} to={`23`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "21-KneeRight").length > 0 && imageDetails.filter(e => e.name === "23-AnkleRight").length > 0) {
-                x[22] = <LineTo delay={500} borderColor="red" from={`20`} to={`22`}
+                x[22] = <LineTo key="22" delay={500} borderColor="red" from={`20`} to={`22`}
                                 within={str}/>
             }
             if (imageDetails.filter(e => e.name === "23-AnkleRight").length > 0 && imageDetails.filter(e => e.name === "25-FootRight").length > 0) {
-                x[23] = <LineTo delay={500} borderColor="red" from={`22`} to={`24`}
+                x[23] = <LineTo key="23" delay={500} borderColor="red" from={`22`} to={`24`}
                                 within={str}/>
             }
         } else { //csv loading
             if (imageDetails.length > 2 && imageDetails[0] !== undefined && imageDetails[1] !== undefined) {
-                x[0] = <LineTo delay={500} borderColor="red" from={`0`} to={`1`} within={str}/>
+                x[0] = <LineTo key="0" delay={500} borderColor="red" from={`0`} to={`1`} within={str}/>
             }
             if (imageDetails.length > 3 && imageDetails[1] !== undefined && imageDetails[2] !== undefined) {
-                x[1] = <LineTo delay={500} borderColor="red" from={`1`} to={`2`}
+                x[1] = <LineTo key="1" delay={500} borderColor="red" from={`1`} to={`2`}
                                within={str}/>
             }
             if (imageDetails.length > 4 && imageDetails[2] !== undefined && imageDetails[3] !== undefined) {
-                x[2] = <LineTo delay={500} borderColor="red" from={`2`} to={`3`}
+                x[2] = <LineTo key="2" delay={500} borderColor="red" from={`2`} to={`3`}
                                within={str}/>
             }
             if (imageDetails.length > 5 && imageDetails[2] !== undefined && imageDetails[4] !== undefined) {
-                x[3] = <LineTo delay={500} borderColor="red" from={`2`} to={`4`}
+                x[3] = <LineTo key="3" delay={500} borderColor="red" from={`2`} to={`4`}
                                within={str}/>
             }
             if (imageDetails.length > 6 && imageDetails[2] !== undefined && imageDetails[5] !== undefined) {
-                x[4] = <LineTo delay={500} borderColor="red" from={`2`} to={`15`}
+                x[4] = <LineTo key="4" delay={500} borderColor="red" from={`2`} to={`15`}
                                within={str}/>
             }
             if (imageDetails.length > 7 && imageDetails[3] !== undefined && imageDetails[5] !== undefined) {
-                x[5] = <LineTo delay={500} borderColor="red" from={`3`} to={`5`}
+                x[5] = <LineTo key="5" delay={500} borderColor="red" from={`3`} to={`5`}
                                within={str}/>
             }
             if (imageDetails.length > 8 && imageDetails[5] !== undefined && imageDetails[7] !== undefined) {
-                x[6] = <LineTo delay={500} borderColor="red" from={`5`} to={`7`}
+                x[6] = <LineTo key="6" delay={500} borderColor="red" from={`5`} to={`7`}
                                within={str}/>
             }
             if (imageDetails.length > 9 && imageDetails[7] !== undefined && imageDetails[9] !== undefined) {
-                x[7] = <LineTo delay={500} borderColor="red" from={`7`} to={`9`}
+                x[7] = <LineTo key="7" delay={500} borderColor="red" from={`7`} to={`9`}
                                within={str}/>
             }
             if (imageDetails.length > 10 && imageDetails[7] !== undefined && imageDetails[11] !== undefined) {
-                x[8] = <LineTo delay={500} borderColor="red" from={`7`} to={`11`}
+                x[8] = <LineTo key="8" delay={500} borderColor="red" from={`7`} to={`11`}
                                within={str}/>
             }
             if (imageDetails.length > 11 && imageDetails[11] !== undefined && imageDetails[13] !== undefined) {
-                x[9] = <LineTo delay={500} borderColor="red" from={`11`} to={`13`}
+                x[9] = <LineTo key="9" delay={500} borderColor="red" from={`11`} to={`13`}
                                within={str}/>
             }
             if (imageDetails.length > 12 && imageDetails[4] !== undefined && imageDetails[6] !== undefined) {
-                x[10] = <LineTo delay={500} borderColor="red" from={`4`} to={`6`}
+                x[10] = <LineTo key="10" delay={500} borderColor="red" from={`4`} to={`6`}
                                 within={str}/>
             }
             if (imageDetails.length > 13 && imageDetails[6] !== undefined && imageDetails[8] !== undefined) {
-                x[11] = <LineTo delay={500} borderColor="red" from={`6`} to={`8`}
+                x[11] = <LineTo key="11" delay={500} borderColor="red" from={`6`} to={`8`}
                                 within={str}/>
             }
             if (imageDetails.length > 14 && imageDetails[8] !== undefined && imageDetails[10] !== undefined) {
-                x[12] = <LineTo delay={500} borderColor="red" from={`8`} to={`10`}
+                x[12] = <LineTo key="12" delay={500} borderColor="red" from={`8`} to={`10`}
                                 within={str}/>
             }
             if (imageDetails.length > 15 && imageDetails[8] !== undefined && imageDetails[12] !== undefined) {
-                x[13] = <LineTo delay={500} borderColor="red" from={`8`} to={`12`}
+                x[13] = <LineTo key="13" delay={500} borderColor="red" from={`8`} to={`12`}
                                 within={str}/>
             }
             if (imageDetails.length > 16 && imageDetails[12] !== undefined && imageDetails[14] !== undefined) {
-                x[14] = <LineTo delay={500} borderColor="red" from={`12`} to={`14`}
+                x[14] = <LineTo key="14" delay={500} borderColor="red" from={`12`} to={`14`}
                                 within={str}/>
             }
             if (imageDetails.length > 17 && imageDetails[15] !== undefined && imageDetails[16] !== undefined) {
-                x[15] = <LineTo delay={500} borderColor="red" from={`15`} to={`16`}
+                x[15] = <LineTo key="15" delay={500} borderColor="red" from={`15`} to={`16`}
                                 within={str}/>
             }
             if (imageDetails.length > 18 && imageDetails[16] !== undefined && imageDetails[17] !== undefined) {
-                x[16] = <LineTo delay={500} borderColor="red" from={`16`} to={`17`}
+                x[16] = <LineTo key="16" delay={500} borderColor="red" from={`16`} to={`17`}
                                 within={str}/>
             }
             if (imageDetails.length > 19 && imageDetails[16] !== undefined && imageDetails[18] !== undefined) {
-                x[17] = <LineTo delay={500} borderColor="red" from={`16`} to={`18`}
+                x[17] = <LineTo key="17" delay={500} borderColor="red" from={`16`} to={`18`}
                                 within={str}/>
             }
             if (imageDetails.length > 20 && imageDetails[17] !== undefined && imageDetails[19] !== undefined) {
-                x[18] = <LineTo delay={500} borderColor="red" from={`17`} to={`19`}
+                x[18] = <LineTo key="18" delay={500} borderColor="red" from={`17`} to={`19`}
                                 within={str}/>
             }
             if (imageDetails.length > 21 && imageDetails[18] !== undefined && imageDetails[20] !== undefined) {
-                x[19] = <LineTo delay={500} borderColor="red" from={`18`} to={`20`}
+                x[19] = <LineTo key="19" delay={500} borderColor="red" from={`18`} to={`20`}
                                 within={str}/>
             }
             if (imageDetails.length > 22 && imageDetails[19] !== undefined && imageDetails[21] !== undefined) {
-                x[20] = <LineTo delay={500} borderColor="red" from={`19`} to={`21`}
+                x[20] = <LineTo key="20" delay={500} borderColor="red" from={`19`} to={`21`}
                                 within={str}/>
             }
             if (imageDetails.length > 23 && imageDetails[21] !== undefined && imageDetails[23] !== undefined) {
-                x[21] = <LineTo delay={500} borderColor="red" from={`21`} to={`23`}
+                x[21] = <LineTo key="21" delay={500} borderColor="red" from={`21`} to={`23`}
                                 within={str}/>
             }
             if (imageDetails.length > 24 && imageDetails[20] !== undefined && imageDetails[22] !== undefined) {
-                x[22] = <LineTo delay={500} borderColor="red" from={`20`} to={`22`}
+                x[22] = <LineTo key="22" delay={500} borderColor="red" from={`20`} to={`22`}
                                 within={str}/>
             }
             if (imageDetails.length > 25 && imageDetails[22] !== undefined && imageDetails[24] !== undefined) {
-                x[23] = <LineTo delay={500} borderColor="red" from={`22`} to={`24`}
+                x[23] = <LineTo key="23" delay={500} borderColor="red" from={`22`} to={`24`}
                                 within={str}/>
             }
         }
@@ -326,10 +326,10 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
             render: (record: ImageDetail) => (
                 <Button type="primary" onClick={
                     () => {
+                        formMove.resetFields()
                         send({
                             type: 'MOVE', payload: {documentDetail: record}
                         })
-                        setMoveVisible(true)
                     }
                 }> Move </Button>
             )
@@ -375,18 +375,13 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                     {/*Records detail zone */}
                     <Card title="These are our tag records data" bordered={true}
                           style={{width: '100%', backgroundColor: 'rgba(255, 255, 255, 0.0)'}}
-                        // actions={[<Button type="primary" onClick={
-                        //     () => {
-                        //         setAddEditVisible(true)
-                        //     }
-                        // } disabled={newImageDetails.length === 0}>Add
-                        // </Button>]}
                     >
                         <>
                             {tagState.context.documentDetails.length > 0 ?
                                 <Table rowKey="id"
                                        dataSource={tagState.context.documentDetails.sort((a, b) => a.id - b.id)}
                                        columns={columns}
+                                       scroll={{ y: 200 }}
                                        size="small"/> :
                                 null}
                         </>
@@ -403,8 +398,6 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                             <Form className="px-4" name="dynamic_form_item" {...formItemLayoutWithOutLabel}
                                   form={formTag}
                                   onFinish={onFinish} autoComplete="off"
-                                // labelCol={{ span: 8 }}
-                                // wrapperCol={{ span: 16 }}
                             >
                                 <Form.List name="items" initialValue={newImageDetails}>
                                     {(fields, {add, remove}) => (
@@ -458,54 +451,52 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
 
             <Match on={['moveDocumentDetail']} state={tagState}>
                 {/*Moving zone*/}
-                <Modal visible={moveVisible} closable={true} maskClosable={false}
-                       onOk={() => {
-                           let myDetail: ImageDetail = {} as ImageDetail
-                           if (tagState.context.currentDetailForMoving) {
-                               myDetail = {
-                                   ...tagState.context.currentDetailForMoving,
-                                   x: formMove.getFieldValue('x') as number,
-                                   y: formMove.getFieldValue('y') as number
+                {tagState.context.currentDetailForMoving &&
+                    <Modal visible={true} closable={true} maskClosable={false}
+                           onOk={() => {
+                               let myDetail: ImageDetail = {} as ImageDetail
+                               if (tagState.context.currentDetailForMoving) {
+                                   if (formMove.getFieldValue('x') && formMove.getFieldValue('y')){
+                                       myDetail = {
+                                           ...tagState.context.currentDetailForMoving,
+                                           x: formMove.getFieldValue('x') as number,
+                                           y: formMove.getFieldValue('y') as number
+                                       }
+                                       send({type: 'DO_MOVE', payload: {documentDetail: myDetail}})
+                                   }
                                }
-                               send({type: 'DO_MOVE', payload: {documentDetail: myDetail}})
-                               formMove.resetFields()
-                               setMoveVisible(false)
-                               onRefresh(tagState.context.documentDetails.length)
-                           }
-                       }}
-                       onCancel={() => {
-                           send({type: 'CANCEL_MOVE'})
-                           formMove.resetFields()
-                           setMoveVisible(false)
-                           onRefresh(tagState.context.documentDetails.length)
-                       }}
-                >
-                    <div style={{
-                        padding: '40px'
-                    }}>
-                        <Form form={formMove} >
-                            <Form.Item
-                                key="x"
-                                label="X"
-                                name="x"
-                                initialValue={tagState.context.currentDetailForMoving?.x}
-                                rules={[{required: true, message: 'Please input x'}]}
-                            >
-                                <Input width={100}/>
-                            </Form.Item>
+                           }}
+                           onCancel={() => {
+                               send({type: 'CANCEL_MOVE'})
+                           }}
+                    >
+                        <div style={{
+                            padding: '40px'
+                        }}>
+                            <Form form={formMove}>
+                                <Form.Item
+                                    key={tagState.context.currentDetailForMoving?.x}
+                                    label="X"
+                                    name="x"
+                                    initialValue={tagState.context.currentDetailForMoving?.x}
+                                    rules={[{required: true, message: 'Please input x'}]}
+                                >
+                                    <Input width={100}/>
+                                </Form.Item>
 
-                            <Form.Item
-                                key="y"
-                                label="Y"
-                                name="y"
-                                initialValue={tagState.context.currentDetailForMoving?.y}
-                                rules={[{required: true, message: 'Please input y'}]}
-                            >
-                                <Input width={100}/>
-                            </Form.Item>
-                        </Form>
-                    </div>
-                </Modal>
+                                <Form.Item
+                                    key={tagState.context.currentDetailForMoving?.y}
+                                    label="Y"
+                                    name="y"
+                                    initialValue={tagState.context.currentDetailForMoving?.y}
+                                    rules={[{required: true, message: 'Please input y'}]}
+                                >
+                                    <Input width={100}/>
+                                </Form.Item>
+                            </Form>
+                        </div>
+                    </Modal>
+                }
             </Match>
 
             <Match on={['loadRejected']} state={tagState}>
