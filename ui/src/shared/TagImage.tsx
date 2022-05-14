@@ -278,7 +278,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
         );
 
         send({type: 'SAVE', payload: {documentDetails: newDetails}})
-        onRefresh(tagState.context.documentDetails.length + newDetails.length)
+        // onRefresh(tagState.context.documentDetails.length + newDetails.length)
         setNewImageDetails([])
         setAddEditVisible(false)
         formTag.resetFields()
@@ -346,7 +346,10 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
             </Match>
 
             <Match on={['loadResolved']} state={tagState}>
-                <Modal className="content-center" visible={visible} onCancel={onClose} width={800} title={null}
+                <Modal className="content-center" visible={visible} onCancel={()=>{
+                    onClose()
+                    onRefresh(tagState.context.documentDetails.length)
+                }} width={800} title={null}
                        footer={null} maskClosable={false}>
                     <div
                         onClick={() => setAddEditVisible(true)}
@@ -608,10 +611,10 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                     id: 'deletingDocumentDetail',
                     src: 'deleteDetailData',
                     onDone: {
-                        target: 'loadingDocumentDetails'
+                        target: 'loadResolved'
                     },
                     onError: {
-                        target: 'loadingDocumentDetails'
+                        target: 'loadResolved'
                     }
                 }
             },
