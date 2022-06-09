@@ -54,7 +54,7 @@ const TagImageValidate: React.FC<TagImageValidateProps> = ({
             title: 'Validate',
             key: 'validate',
             render: (record: ImageDetail) => (
-                <Button danger onClick={
+                <Button onClick={
                     () => {
                         onSave(record.id)
                     }

@@ -113,6 +113,7 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
                               nrFrames: undefined
                           }}>
                         <Form.Item label="Number of Frames" name="nrFrames">
+                            {/*TODO change number of frames*/}
                             <InputNumber min={1} max={10}/>
                         </Form.Item>
                     </Form>
