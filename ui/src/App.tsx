@@ -2,7 +2,6 @@ import React from 'react';
 import {Alert, Button, Form, Input, Layout, Modal, notification, Result, Spin} from 'antd';
 import {Route, Switch, withRouter} from 'react-router-dom'
 import {LoadingOutlined} from '@ant-design/icons'
-import Home from './Home';
 import About from './pages/About';
 import {createAuthMachine} from './AuthMachine';
 import {useMachine} from '@xstate/react';
@@ -15,6 +14,7 @@ import Projects from "./pages/Projects";
 import {Roles} from "./models/Roles";
 import Users from "./pages/Users";
 import Validate from "./pages/Validate";
+import HomeNew from "./HomeNew";
 
 const { Header, Content } = Layout
 
@@ -422,10 +422,10 @@ const App: React.VFC = () => {
               style={{
                 margin: '10px 10px',
                 padding: 5,
-                minHeight: 720
+                minHeight: 600
               }}>
               <Switch>
-                <Route path={'/'} exact component={() => <Home />} />
+                <Route path={'/'} exact component={() => <HomeNew />} />
                 {!authState.context.authResult?.roles.includes(Roles.VALIDATOR) &&
                   <Route path={'/dashboard'} exact component={() => <Dashboard/>}/>
                 }

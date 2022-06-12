@@ -38,11 +38,10 @@
     "xstate": "^4.25.0"
   },
   "scripts": {
-    "start": "HTTPS=true PORT=3001 craco start",
+    "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "typecheck": "tsc --noEmit",
-    "json-server": "json-server --host 192.168.1.2 --port 3000 server/db.json"
+    "typecheck": "tsc --noEmit"
   },
   "eslintConfig": {
     "extends": [

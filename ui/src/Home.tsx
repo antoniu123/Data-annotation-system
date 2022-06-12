@@ -207,26 +207,29 @@ const Home: React.VFC = () => {
                 <section className="container">
                     <div>
                         <Row className="font-extrabold">Graphic</Row>
-                        <Row gutter={[16, 16]}>
-                            {userPercent && userPercent.length> 0 && <Col key={1} xs={{span: 6, offset: 1}} lg={{span: 10, offset: 2}}>
+                        <Row gutter={[10, 10]}>
+                            {userPercent && userPercent.length> 0 && <Col key={1} xs={{span: 6, offset: 1}} lg={{span: 10, offset: 1}}>
                                 <div style={{backgroundColor: 'white'}}>
+                                    <p className="text-center text-blue-600">Percent for each user role</p>
                                     <Pie data={userPercent} {...configPie} />
                                 </div>
                             </Col>}
 
-                            {dataBar1 && dataBar1.length > 0 && <Col key={2} xs={{span: 6, offset: 1}} lg={{span: 10, offset: 2}}>
+                            {dataBar1 && dataBar1.length > 0 && <Col key={2} xs={{span: 6, offset: 1}} lg={{span: 10, offset: 1}}>
                                 <div style={{backgroundColor: 'white'}}>
+                                    <p className="text-center text-blue-600">Count per each document Detail</p>
                                     <Bar {...dataConfig1} />
                                 </div>
                             </Col>}
 
-                            {dataBar2 && dataBar2.length > 0 && <Col key={2} xs={{span: 6, offset: 1}} lg={{span: 10, offset: 2}}>
+                            {dataBar2 && dataBar2.length > 0 && <Col key={2} xs={{span: 6, offset: 1}} lg={{span: 10, offset: 1}}>
                                 <div style={{backgroundColor: 'white'}}>
+                                    <p className="text-center text-blue-600">Document Details</p>
                                     <Bar {...dataConfig2} />
                                 </div>
                             </Col>}
 
-                            {dataLine && dataLine.length > 0 && <Col key={3} xs={{span: 6, offset: 1}} lg={{span: 4, offset: 2}}>
+                            {dataLine && dataLine.length > 0 && <Col key={3} xs={{span: 6, offset: 1}} lg={{span: 4, offset: 1}}>
                                 <div style={{backgroundColor: 'white'}}>
                                     <p className="text-center text-blue-600">Tags per document</p>
                                     <Line data={dataLine} {...configLine} />
