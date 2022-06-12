@@ -73,12 +73,11 @@ public class JwtService {
         ApplicationUser applicationUser = applicationUserRepository.findByUsername(userPrincipal.getUsername())
                 .orElseGet(ApplicationUser::new);
 
-        String token_generated = Jwts.builder().setSubject((userPrincipal.getUsername())).claim("roles", authorities)
+        return Jwts.builder().setSubject((userPrincipal.getUsername())).claim("roles", authorities)
                 .setId(applicationUser.getId().toString())
                 .setIssuer(applicationUser.getEmail())
                 .setIssuedAt(new Date()).setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
                 .signWith(SignatureAlgorithm.HS512, encodedJwtSecret()).compact();
-        return token_generated;
     }
 
     public String getUserNameFromJwtToken(String token) {
