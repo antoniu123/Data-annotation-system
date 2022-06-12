@@ -65,7 +65,7 @@ const HomeNew: React.VFC = () => {
                 if (result.data && result.data.length > 0)
                     setCompletedPercent(result.data[0].percent/ 100)
                 else
-                    setCompletedPercent(0.00)
+                    setCompletedPercent(0)
             }
         }
         const getText4 = async () => {
@@ -283,11 +283,9 @@ const HomeNew: React.VFC = () => {
                                     <div className="p-5">
                                         <canvas id="chartjs-7" className="chartjs" width="40px"
                                                 height="20px"/>
-                                        {completedPercent &&
                                             <div style={{backgroundColor: 'white'}}>
                                                 <Liquid {...configLiquid} />
                                             </div>
-                                        }
                                     </div>
                                 </div>
                             </div>
@@ -318,10 +316,11 @@ const HomeNew: React.VFC = () => {
                                     <div className="p-5">
                                         <canvas id="chartjs-1" className="chartjs" width="40px"
                                                 height="20px"/>
-                                        {dataLine && dataLine.length > 0 &&
+                                        {dataLine && dataLine.length > 0 ?
                                             <div style={{backgroundColor: 'white'}}>
                                                 <Line data={dataLine} {...configLine} />
-                                            </div>
+                                            </div> :
+                                            <> No tags present </>
                                         }
                                     </div>
                                 </div>
