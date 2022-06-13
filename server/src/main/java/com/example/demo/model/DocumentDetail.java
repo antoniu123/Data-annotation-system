@@ -45,12 +45,6 @@ public class DocumentDetail {
     @Column(name = "Y")
     private Double y;
 
-    @Column(name = "OFFSET_X")
-    private Long offsetX;
-
-    @Column(name = "OFFSET_Y")
-    private Long offsetY;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_ID", nullable = false)
     private ApplicationUser owner;
