@@ -1,6 +1,6 @@
 import React from 'react';
 import {Alert, Button, Form, Input, Layout, Modal, notification, Result, Spin} from 'antd';
-import {Route, Switch, withRouter} from 'react-router-dom'
+import {Route, Switch, useHistory, withRouter} from 'react-router-dom'
 import {LoadingOutlined} from '@ant-design/icons'
 import About from './pages/About';
 import {createAuthMachine} from './AuthMachine';
@@ -32,6 +32,7 @@ export const UserContext = React.createContext<UserContextInterface | null>(null
 const App: React.VFC = () => {
   
   const [authState, send] = useMachine(createAuthMachine())
+  const navigate = useHistory();
 
   const onSubmitLogin = (values: any) => {
     send({
@@ -106,16 +107,17 @@ const App: React.VFC = () => {
     })
   }
 
-  const moveRecover = (values: any) => {
-    send({
-      type: 'MOVE_RECOVER'
-    })
-  }
+  // const moveRecover = (values: any) => {
+  //   send({
+  //     type: 'MOVE_RECOVER'
+  //   })
+  // }
 
   const logOut = () => {
     send({
       type: 'LOGOUT'
     })
+    navigate.push("/")
   }
 
   return (
@@ -161,20 +163,20 @@ const App: React.VFC = () => {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center">
-                    <Input id="remember-me" name="remember-me" type="checkbox" className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"/>
-                    <label className="block ml-2 text-sm text-gray-900">
-                      Remember me
-                    </label>
-                  </div>
+                {/*<div className="flex items-center justify-between">*/}
+                {/*  <div className="flex items-center">*/}
+                {/*    <Input id="remember-me" name="remember-me" type="checkbox" className="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"/>*/}
+                {/*    <label className="block ml-2 text-sm text-gray-900">*/}
+                {/*      Remember me*/}
+                {/*    </label>*/}
+                {/*  </div>*/}
 
-                  <div className="text-sm">
-                    <div className="font-medium text-indigo-600 hover:text-indigo-500" onClick={moveRecover}>
-                      Forgot your password?
-                    </div>
-                  </div>
-                </div>
+                {/*  <div className="text-sm">*/}
+                {/*    <div className="font-medium text-indigo-600 hover:text-indigo-500" onClick={moveRecover}>*/}
+                {/*      Forgot your password?*/}
+                {/*    </div>*/}
+                {/*  </div>*/}
+                {/*</div>*/}
 
                 <div className="-space-y-px rounded-md shadow-sm">
                     <button type="submit" className="relative flex justify-center w-full px-4 py-2 text-sm font-medium text-white bg-indigo-500 border border-transparent rounded-md group hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
