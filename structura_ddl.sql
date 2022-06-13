@@ -95,8 +95,6 @@ CREATE TABLE DOCUMENT_DETAIL
     DETAIL_STATUS_ID NUMBER(10, 0)  NOT NULL,
     X                NUMBER,
     Y                NUMBER,
-    OFFSET_X         NUMBER,
-    OFFSET_Y         NUMBER,
     OWNER_ID         NUMBER(10, 0)
 );
 
