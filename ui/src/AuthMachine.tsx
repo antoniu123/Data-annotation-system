@@ -425,74 +425,72 @@ export const createAuthMachine = () =>
                                         return Promise.reject(err)
                                       })
             },
-            performChangePassword: (id, event) => {
-              let oldPassword = ''
-              let password = ''
-              let userId = 0
-              const token = JSON.parse(window.localStorage.getItem("jwt") ?? "")
-              if (event.type === 'CHANGE_PASSWORD') {
-                 userId = event.payload.userId
-                 oldPassword = event.payload.oldPassword
-                 password = event.payload.password
-              }
-              //check old password
-              const urlVerifyPassword = `http://${process.env.REACT_APP_SERVER_NAME}/api/auth/passwordverify/${userId}`
-              axios
-                .get(urlVerifyPassword, { headers: {"Authorization" : `Bearer ${token}`} })
-                .then((ret) => {
-                  if (!bcrypt.compareSync(oldPassword, ret.data.password )) {
-                    notification.error({message: 'Error', description: "Password doesn't match"})
-                    return Promise.reject("Error on checking old password")
-                  }
-                  else{
-                    notification.info({message: 'Info', description: "Old Password checked successfully"})
-                  }                             
-                })
-                .catch((err) => {
-                  notification.error({message: 'Error', description: err})
-                  return Promise.reject(err)
-                })
-              //if it is ok then change it
-              const url = `http://${process.env.REACT_APP_SERVER_NAME}/api/auth/passwordchange/${userId}`
-              const body = {
-                password: password
-              }
-              const config = {
-                headers: { Authorization: `Bearer ${token}` }
-              }
-              return async () => axios.post(url,
-                                      body,
-                                      config)
-                                  .then((ret) => {
-                                      if (ret.data && ret.data.message ) {
-                                          notification.info({
-                                            message: 'Info',
-                                            description: ret.data.message
-                                          })
-                                          return Promise.resolve(ret.data.message)
-                                      }                     
-                                      else{
-                                          notification.error({
-                                            message: 'Error',
-                                            description: "Password not changed due to an error"
-                                          })
-                                          return Promise.reject("Password not changed due to an error")     
-                                      }                                
-                                      })
-                                  .catch((err) => {
-                                      if (err.response.data.message){
-                                        notification.error({
-                                          message: 'Error',
-                                          description: err.response.data.message
-                                        })
-                                        return Promise.reject(err.response.data.message)
-                                      }
-                                      notification.error({
-                                        message: 'Error',
-                                        description: err
-                                      })
-                                      return Promise.reject(err)
-                                    })                
+            performChangePassword: async (id, event) => {
+                let oldPassword = ''
+                let password = ''
+                let userId = 0
+                const token = JSON.parse(window.localStorage.getItem("jwt") ?? "")
+                if (event.type === 'CHANGE_PASSWORD') {
+                    userId = event.payload.userId
+                    oldPassword = event.payload.oldPassword
+                    password = event.payload.password
+                }
+                //check old password
+                const urlVerifyPassword = `http://${process.env.REACT_APP_SERVER_NAME}/api/auth/passwordverify/${userId}`
+                await axios
+                    .get(urlVerifyPassword, {headers: {"Authorization": `Bearer ${token}`}})
+                    .then((ret) => {
+                        if (!bcrypt.compareSync(oldPassword, ret.data.password)) {
+                            notification.error({message: 'Error', description: "Password doesn't match"})
+                            return Promise.reject("Error on checking old password")
+                        } else {
+                            notification.info({message: 'Info', description: "Old Password checked successfully"})
+                        }
+                    })
+                    .catch((err) => {
+                        notification.error({message: 'Error', description: err})
+                        return Promise.reject(err)
+                    })
+                //if it is ok then change it
+                const url = `http://${process.env.REACT_APP_SERVER_NAME}/api/auth/passwordchange/${userId}`
+                const body = {
+                    password: password
+                }
+                const config = {
+                    headers: {Authorization: `Bearer ${token}`}
+                }
+                await axios.post(url,
+                    body,
+                    config)
+                    .then((ret) => {
+                        if (ret.data && ret.data.message) {
+                            notification.info({
+                                message: 'Info',
+                                description: ret.data.message
+                            })
+                            return Promise.resolve(ret.data.message)
+                        } else {
+                            notification.error({
+                                message: 'Error',
+                                description: "Password not changed due to an error"
+                            })
+                            return Promise.reject("Password not changed due to an error")
+                        }
+                    })
+                    .catch((err) => {
+                        if (err.response.data.message) {
+                            notification.error({
+                                message: 'Error',
+                                description: err.response.data.message
+                            })
+                            return Promise.reject(err.response.data.message)
+                        }
+                        notification.error({
+                            message: 'Error',
+                            description: err
+                        })
+                        return Promise.reject(err)
+                    })
             }
           }
         }
