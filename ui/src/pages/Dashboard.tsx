@@ -10,7 +10,6 @@ import '../css/card.css'
 import { UserContext } from '../App'
 import axios from 'axios'
 import VideoCard from '../shared/VideoCard'
-import TextCard from '../shared/TextCard'
 
 const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />
 
@@ -26,10 +25,6 @@ const urlImage = (id: number) : string => {
 
 const urlVideo = (id: number) : string => {
   return `http://${process.env.REACT_APP_SERVER_NAME}/video/mp4/`+ id
-}
-
-const urlText = (id: number) : string => {
-  return `http://${process.env.REACT_APP_SERVER_NAME}/text/`+ id
 }
 
 const Dashboard: React.VFC = () => {
@@ -82,20 +77,6 @@ const Dashboard: React.VFC = () => {
                           <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>
                             <VideoCard key={index} id={document.id} title={document.name} details={getRandom(1,20)} order={document.id}
                              urlVideo={urlVideo(document.id)} refresh={()=>send({type: 'RETRY'})}/>
-                          </Col>                        
-                      ))}
-                     </Row>
-                  </div>   
-                </section>
-                <section className="container">
-                  <div>
-                    <Row className="font-extrabold">Text Files</Row>
-                    <Row gutter={[16, 16]}>
-                      {documentState.context.documents
-                        .filter(doc => doc.documentType === 'text/plain' || doc.documentType === 'application/x-sql')
-                        .map((document, index) => (                        
-                          <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>
-                             <TextCard key={index} title={document.name} details={getRandom(1,20)} order={document.id} textUrl={urlText(document.id)} /> 
                           </Col>                        
                       ))}
                      </Row>
