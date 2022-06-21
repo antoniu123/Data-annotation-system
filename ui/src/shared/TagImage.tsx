@@ -266,6 +266,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
         setMarkers(tagState.context.markers)
         let displayedMarkers : Marker[] = []
         tagState.context.markers.forEach((value, index) => {
+            //it is from csv file no name and no adjustement on percent coordinates
             if (tagState.context.documentDetails[index].name === '-') {
                 const myLeft : Number = (value.left as number * 100) / 1920
                 const myTop : Number = (value.top as number * 100) / 1080
@@ -275,6 +276,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                 }
                 displayedMarkers.push(result)
             }
+            //manually added so no adjustement on percent coordinates
             else {
                 const myLeft : Number = value.left
                 const myTop : Number = value.top
