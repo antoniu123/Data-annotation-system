@@ -125,8 +125,14 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
                         <Form.Item label="Number of Frames" name="nrFrames">
                             <InputNumber min={1} max={100}/>
                         </Form.Item>
-                        <Checkbox defaultChecked={allFrames} onChange={(e:CheckboxChangeEvent)=>
+                        <Checkbox defaultChecked={allFrames} onChange={(e:CheckboxChangeEvent)=> {
                             setAllFrames(e.target.checked)
+                            if (e.target.checked) {
+                                form.setFieldsValue({
+                                    nrFrames: 0
+                                });
+                            }
+                        }
                         }>
                             All Frames
                         </Checkbox>
