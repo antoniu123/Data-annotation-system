@@ -79,9 +79,9 @@ public class DocumentController {
     }
 
     @PostMapping(value = "/video/extract/{id}")
-    public ResponseEntity<Void> extractFrame(@PathVariable("id") Long id, @Valid @RequestParam int nrFrames)
+    public ResponseEntity<Void> extractFrame(@PathVariable("id") Long id, @Valid @RequestParam int nrFrames, @Valid boolean allFrames)
             throws SQLException {
-        videoStreamService.extract(id, nrFrames);
+        videoStreamService.extract(id, nrFrames, allFrames);
         return ResponseEntity.ok().build();
     }
 

@@ -1,15 +1,23 @@
 package com.example.demo.service;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import com.example.demo.dto.ImageDetailDto;
@@ -17,8 +25,6 @@ import com.example.demo.model.Detail;
 import com.example.demo.model.DetailStatus;
 import com.example.demo.model.Document;
 import com.example.demo.model.DocumentDetail;
-import com.example.demo.model.DocumentRole;
-import com.example.demo.model.Role;
 import com.example.demo.parser.CsvParser;
 import com.example.demo.parser.model.ImportRecordDocumentDetail;
 import com.example.demo.repository.DetailRepository;
@@ -124,7 +130,9 @@ public class DocumentDetailService {
                                 return documentService.getAllDocumentWithName(document.getName())
                                         .stream()
                                         .map(Document::getId)
-                                        .map(id-> documentDetailRepository.findAllByDocument(documentService.getDocumentById(id)).size())
+                                        .map(id-> (int) documentDetailRepository.findAllByDocument(documentService.getDocumentById(id))
+                                                .stream()
+                                                .filter(detail -> detail.getDetailStatus().getName().equals("VALIDATED")).count())
                                         .reduce(0, Integer::sum);
                         }
                 }
@@ -227,5 +235,49 @@ public class DocumentDetailService {
                 if (rez !=1){
                         throw new RuntimeException("detail cannot be validated");
                 }
+        }
+
+        public void splitDocumentDetail(MultipartFile multipartFile) throws IOException {
+                InputStream inputStream = multipartFile.getInputStream();
+                AtomicInteger cnt = new AtomicInteger();
+                AtomicReference<File> csvOutputFile = new AtomicReference<>();
+                AtomicReference<List<String[]>> lineToBePrinted = new AtomicReference<>(new ArrayList<>());
+                new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
+                        .lines()
+                        .forEach(line ->{
+                                String[] lineAsStringArray = line.split("\\s");
+                                if (lineAsStringArray.length == 10){
+                                        //write the old one file
+                                        if (!Objects.equals(lineToBePrinted.get().size(), 0)){
+                                                final String fileName = cnt.get() + ".csv";
+                                                final File oldFileToBeClosed = new File("./server/import/" + fileName);
+                                                try (PrintWriter pw = new PrintWriter(oldFileToBeClosed)) {
+                                                        lineToBePrinted.get().stream()
+                                                                .map(this::convertToCSV)
+                                                                .forEach(pw::println);
+                                                } catch (FileNotFoundException e) {
+                                                        throw new RuntimeException(e);
+                                                }
+                                        }
+                                        //open the new one list
+                                        List<String[]> myList = new ArrayList<>();
+                                        myList.add(new String[] { "X", "Y" });
+                                        lineToBePrinted.set(myList);
+                                        cnt.addAndGet(1);
+                                        System.out.println("Start new file");
+                                        final String fileName = cnt + ".csv";
+                                        final File newValue = new File("./server/import/" + fileName);
+                                        csvOutputFile.set(newValue);
+
+                                }
+                                if (lineAsStringArray.length == 12){
+                                        List<String[]> myList = lineToBePrinted.get();
+                                        myList.add(new String[] { lineAsStringArray[3], lineAsStringArray[4] });
+                                        lineToBePrinted.set(myList);
+                                }
+                        });
+
+
+
         }
 }

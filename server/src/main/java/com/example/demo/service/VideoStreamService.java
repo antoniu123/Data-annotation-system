@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
+import javax.validation.Valid;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -128,11 +129,11 @@ public class VideoStreamService {
 		return file;
 	}
 
-	public void extract(final Long id, final int nrFrames)
+	public void extract(final Long id, final int nrFrames, @Valid boolean allFrames)
 			throws SQLException {
 		String name = imageService.getDocumentById(id).getName();
-		if (nrFrames < 1) {
-			throw new RuntimeException("not a valid number of frames");
+		if (nrFrames < 1 && !allFrames ) {
+			throw new RuntimeException("not a valid number of frames or not all frames");
 		}
 		final byte[] bytes = getBytesDataFromFileId(id);
 		final File myObj = writeByteToFile("video.mp4", bytes);
@@ -142,32 +143,55 @@ public class VideoStreamService {
 			frameGrabber.start();
 			final int videoFramesNr = frameGrabber.getLengthInVideoFrames();
 			final int framesNr = frameGrabber.getLengthInFrames();
-			if (nrFrames > videoFramesNr) {
-				throw new RuntimeException("over a valid number of frames");
-			}
 			System.out.println(
 					"Video has " + frameGrabber.getFrameRate() + " frame rate and " +
 							videoFramesNr + " number of video frames and " +
 							framesNr + " frames");
-			final int step = (videoFramesNr / nrFrames) - 1;
-			Java2DFrameConverter c = new Java2DFrameConverter();
-			System.out.println("Step is " + step);
-			for (int i = step; i <= framesNr; i = i + step) {
-				frameGrabber.setFrameNumber(i);
-				Frame f = frameGrabber.grabImage();
-				BufferedImage bi = c.convert(f);
-				if (Objects.nonNull(bi)) {
-					File file = new File("img" + i + ".png");
-					ImageIO.write(bi, "png", file);
-					imageService.saveImageFromVideo(file, name);
-					Files.delete(file.toPath());
-					System.out.println("delete from disk and write to database " + file.getName());
+			if (!allFrames){
+				if (nrFrames > videoFramesNr) {
+					throw new RuntimeException("over a valid number of frames");
 				}
-				c.close();
+				final int step = (videoFramesNr / nrFrames) - 1;
+				Java2DFrameConverter c = new Java2DFrameConverter();
+				System.out.println("Step is " + step);
+				for (int i = step; i <= framesNr; i = i + step) {
+					frameGrabber.setFrameNumber(i);
+					Frame f = frameGrabber.grabImage();
+					BufferedImage bi = c.convert(f);
+					if (Objects.nonNull(bi)) {
+						File file = new File("img" + i + ".png");
+						ImageIO.write(bi, "png", file);
+						imageService.saveImageFromVideo(file, name);
+						Files.delete(file.toPath());
+						System.out.println("delete from disk and write to database " + file.getName());
+					}
+					c.close();
+				}
+				frameGrabber.flush();
+				frameGrabber.stop();
+				Files.delete(myObj.toPath());
 			}
-			frameGrabber.flush();
-			frameGrabber.stop();
-			Files.delete(myObj.toPath());
+			else {
+				final int step = 1;
+				Java2DFrameConverter c = new Java2DFrameConverter();
+				System.out.println("Step is " + step);
+				for (int i = 1; i <= framesNr; i = i + step) {
+					frameGrabber.setFrameNumber(i);
+					Frame f = frameGrabber.grabImage();
+					BufferedImage bi = c.convert(f);
+					if (Objects.nonNull(bi)) {
+						File file = new File("img" + i + ".png");
+						ImageIO.write(bi, "png", file);
+						imageService.saveImageFromVideo(file, name);
+						Files.delete(file.toPath());
+						System.out.println("delete from disk and write to database " + file.getName());
+					}
+					c.close();
+				}
+				frameGrabber.flush();
+				frameGrabber.stop();
+				Files.delete(myObj.toPath());
+			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
 		}

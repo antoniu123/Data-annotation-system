@@ -54,4 +54,13 @@ public class ImportExportController {
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
+    @PostMapping(value = "/document/import", consumes = { MediaType.MULTIPART_FORM_DATA_VALUE })
+    public ResponseEntity<Void> splitDocument(@RequestPart("file") MultipartFile csvFile) throws IOException {
+        if (csvFile.isEmpty()) {
+            throw new IllegalArgumentException("csv file is empty");
+        }
+        documentDetailService.splitDocumentDetail(csvFile);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
 }
