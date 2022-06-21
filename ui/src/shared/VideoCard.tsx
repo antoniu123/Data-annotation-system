@@ -2,8 +2,9 @@ import axios from "axios";
 import { BsTag } from "react-icons/bs";
 import ReactPlayer from "react-player";
 import '../css/card.css'
-import {useEffect, useState} from "react";
-import {Card, Form, InputNumber, Modal} from "antd";
+import {useEffect,  useState} from "react";
+import {Card, Checkbox, Form, InputNumber, Modal, notification} from "antd"
+import {CheckboxChangeEvent} from "antd/es/checkbox";
 
 const styleCard:React.CSSProperties = {
     padding: '30px',
@@ -24,6 +25,8 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
 
     const [cnt, setCnt] = useState(0)
 
+    const [allFrames, setAllFrames] = useState<boolean>(false)
+
     useEffect(() => {
         const textUrl = `http://${process.env.REACT_APP_SERVER_NAME}/document/${id}/count`
 
@@ -42,7 +45,7 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
 
 
     const [form] = Form.useForm();
-    const extract = (id:number, nrFrames:number) => {
+    const extract = (id:number, nrFrames:number, allFrames: boolean) => {
       const token = JSON.parse(window.localStorage.getItem("jwt") ?? "")
       const config = {
         headers: {
@@ -50,7 +53,8 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
           Authorization: `Bearer ${token}`
         },
         params: {
-           nrFrames: nrFrames
+           nrFrames: nrFrames,
+           allFrames: allFrames
         }
       }
       
@@ -74,7 +78,7 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
       <div className="wrapper wrapperAnime">
         <div className="header">
           <div className="wrapper">
-            <ReactPlayer url={urlVideo} controls={true} width="40%" height="30%"/>   
+            <ReactPlayer url={urlVideo} controls={true} width="80%" height="60%"/>
           </div>
           <div className="badgeWrapper">
             <div
@@ -97,11 +101,17 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
                closable={true}
                onCancel={()=>setDisplayModal(false)}
                onOk={()=>{
-                   if (form.getFieldValue('nrFrames') !== undefined){
-                       extract(order, form.getFieldValue('nrFrames'))
+                   if (form.getFieldValue('nrFrames') !== 0 || allFrames){
+                       extract(order, form.getFieldValue('nrFrames'), allFrames)
                        setDisplayModal(false)
                        form.resetFields()
                        refresh()
+                   }
+                   else {
+                       notification.error({
+                           message: 'Error',
+                           description: 'No input for getting frames'
+                       })
                    }
                }}
                >
@@ -110,12 +120,16 @@ const VideoCard : React.VFC<VideoCardProps> = ({ id, title, details, order, urlV
                     <Form form={form} labelCol={{span: 8}}
                           wrapperCol={{span: 16}}
                           initialValues={{
-                              nrFrames: undefined
+                              nrFrames: 0
                           }}>
                         <Form.Item label="Number of Frames" name="nrFrames">
-                            {/*TODO change number of frames*/}
-                            <InputNumber min={1} max={10}/>
+                            <InputNumber min={1} max={100}/>
                         </Form.Item>
+                        <Checkbox defaultChecked={allFrames} onChange={(e:CheckboxChangeEvent)=>
+                            setAllFrames(e.target.checked)
+                        }>
+                            All Frames
+                        </Checkbox>
                     </Form>
                 </Card>
             </div>

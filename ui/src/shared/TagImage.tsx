@@ -46,7 +46,9 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
 
     // const [moveVisible, setMoveVisible] = useState(false);
 
-    const [markers, setMarkers] = useState<Array<Marker>>([]);
+    const [, setMarkers] = useState<Array<Marker>>([]);
+
+    const [displayedMarkers, setDisplayedMarkers] = useState<Array<Marker>>([]);
 
     const [newImageDetails, setNewImageDetails] = useState<Array<ImageDetail>>([]);
 
@@ -262,6 +264,17 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
 
     const putMarkers = () => {
         setMarkers(tagState.context.markers)
+        let displayedMarkers : Marker[] = []
+        tagState.context.markers.forEach((value) => {
+            const myLeft : Number = (value.left as number * 100) / 1920
+            const myTop : Number = (value.top as number * 100) / 1080
+            const result : Marker = {
+                left : myLeft,
+                top: myTop
+            }
+            displayedMarkers.push(result)
+        })
+        setDisplayedMarkers(displayedMarkers)
     }
 
     const onFinish = (values: any) => {
@@ -357,9 +370,9 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                         {/*Image zone*/}
                         <ImageMarker
                             src={urlImage}
-                            markers={markers}
+                            markers={displayedMarkers}
                             onAddMarker={(marker: Marker) => {
-                                setMarkers([...markers, marker])
+                                setMarkers([...displayedMarkers, marker])
                                 marker.left = marker.left as number + 1.1
                                 marker.top = marker.top as number + 0.65
                                 const newDetail: ImageDetail = {

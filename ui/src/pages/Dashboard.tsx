@@ -72,7 +72,7 @@ const Dashboard: React.VFC = () => {
                     <Row className="font-extrabold">Videos</Row>
                     <Row gutter={[16, 16]}>
                       {documentState.context.documents
-                        .filter(doc=> doc.documentType === 'video/mp4')
+                        .filter(doc=> doc.documentType.includes('video'))
                         .map((document, index) => (                        
                           <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>
                             <VideoCard key={index} id={document.id} title={document.name} details={getRandom(1,20)} order={document.id}
