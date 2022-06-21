@@ -265,14 +265,26 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
     const putMarkers = () => {
         setMarkers(tagState.context.markers)
         let displayedMarkers : Marker[] = []
-        tagState.context.markers.forEach((value) => {
-            const myLeft : Number = (value.left as number * 100) / 1920
-            const myTop : Number = (value.top as number * 100) / 1080
-            const result : Marker = {
-                left : myLeft,
-                top: myTop
+        tagState.context.markers.forEach((value, index) => {
+            if (tagState.context.documentDetails[index].name === '-') {
+                const myLeft : Number = (value.left as number * 100) / 1920
+                const myTop : Number = (value.top as number * 100) / 1080
+                const result : Marker = {
+                    left : myLeft,
+                    top: myTop
+                }
+                displayedMarkers.push(result)
             }
-            displayedMarkers.push(result)
+            else {
+                const myLeft : Number = value.left
+                const myTop : Number = value.top
+                const result : Marker = {
+                    left : myLeft,
+                    top: myTop
+                }
+                displayedMarkers.push(result)
+            }
+
         })
         setDisplayedMarkers(displayedMarkers)
     }
