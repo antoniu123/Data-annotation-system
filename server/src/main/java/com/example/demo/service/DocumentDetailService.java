@@ -240,7 +240,6 @@ public class DocumentDetailService {
         public void splitDocumentDetail(MultipartFile multipartFile) throws IOException {
                 InputStream inputStream = multipartFile.getInputStream();
                 AtomicInteger cnt = new AtomicInteger();
-                AtomicReference<File> csvOutputFile = new AtomicReference<>();
                 AtomicReference<List<String[]>> lineToBePrinted = new AtomicReference<>(new ArrayList<>());
                 new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8))
                         .lines()
@@ -250,7 +249,8 @@ public class DocumentDetailService {
                                         //write the old one file
                                         if (!Objects.equals(lineToBePrinted.get().size(), 0)){
                                                 final String fileName = cnt.get() + ".csv";
-                                                final File oldFileToBeClosed = new File("./server/import/" + fileName);
+                                                final File oldFileToBeClosed = new File("./server/import/" + multipartFile.getOriginalFilename()
+                                                        + "_" + fileName);
                                                 try (PrintWriter pw = new PrintWriter(oldFileToBeClosed)) {
                                                         lineToBePrinted.get().stream()
                                                                 .map(this::convertToCSV)
@@ -264,15 +264,14 @@ public class DocumentDetailService {
                                         myList.add(new String[] { "X", "Y" });
                                         lineToBePrinted.set(myList);
                                         cnt.addAndGet(1);
-                                        System.out.println("Start new file");
-                                        final String fileName = cnt + ".csv";
-                                        final File newValue = new File("./server/import/" + fileName);
-                                        csvOutputFile.set(newValue);
+                                        final String fileName = cnt.get() + ".csv";
+                                        System.out.println("Start new file " + multipartFile.getOriginalFilename()
+                                                + "_" + fileName);
 
                                 }
                                 if (lineAsStringArray.length == 12){
                                         List<String[]> myList = lineToBePrinted.get();
-                                        myList.add(new String[] { lineAsStringArray[3], lineAsStringArray[4] });
+                                        myList.add(new String[] { lineAsStringArray[5], lineAsStringArray[6] });
                                         lineToBePrinted.set(myList);
                                 }
                         });

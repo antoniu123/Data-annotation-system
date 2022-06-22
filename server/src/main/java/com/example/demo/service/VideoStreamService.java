@@ -170,6 +170,7 @@ public class VideoStreamService {
 				frameGrabber.flush();
 				frameGrabber.stop();
 				Files.delete(myObj.toPath());
+				System.out.println("extraction finished");
 			}
 			else {
 				final int step = 1;
@@ -191,6 +192,7 @@ public class VideoStreamService {
 				frameGrabber.flush();
 				frameGrabber.stop();
 				Files.delete(myObj.toPath());
+				System.out.println("extraction finished");
 			}
 		} catch (Exception e) {
 			throw new RuntimeException(e.getMessage());
