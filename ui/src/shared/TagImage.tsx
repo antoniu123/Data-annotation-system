@@ -25,10 +25,10 @@ interface TagImageProps {
     onRefresh: (cnt: number) => void
 }
 
-const GLOBAL_WIDTH = 1920;
-const GLOBAL_HEIGHT = 1080;
-
 const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, onRefresh}) => {
+
+    const GLOBAL_WIDTH = 1920;
+    const GLOBAL_HEIGHT = 1080;
 
     const selectorName: string[] = ["1-SpineBase", "2-SpineMid", "3-Neck", "4-Head", "5-ShoulderLeft",
         "6-ElbowLeft", "7-WristLeft", "8-HandLeft", "9-ShoulderRight", "10-ElbowRight",
@@ -274,7 +274,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                                 within={str}/>
             }
         }
-        return <>{x.map((currentValue, index, arr) => currentValue)}</>
+        return <>{x.map((currentValue) => currentValue)}</>
     }
 
     const CustomMarker = (props: MarkerComponentProps) => {
@@ -293,8 +293,19 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
         setMarkers(tagState.context.markers)
         let displayedMarkers : Marker[] = []
         tagState.context.markers.forEach((value, index) => {
-            //it is from csv file no name and no adjustement on percent coordinates
-            // if (tagState.context.documentDetails[index].name === '-') {
+            //it is from csv file no name and small adjustment on percent coordinates
+            if (tagState.context.documentDetails[index].name === '-') {
+                const myLeft : Number = (value.left as number  /
+                    GLOBAL_WIDTH) * 100 - 0.5
+                const myTop : Number = (value.top as number / GLOBAL_HEIGHT) * 100 - 1.5
+                const result : Marker = {
+                    left : myLeft,
+                    top: myTop
+                }
+                displayedMarkers.push(result)
+            }
+            //manually added so no adjustment on percent coordinates
+            else {
                 const myLeft : Number = (value.left as number  /
                     GLOBAL_WIDTH) * 100
                 const myTop : Number = (value.top as number / GLOBAL_HEIGHT) * 100
@@ -303,17 +314,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                     top: myTop
                 }
                 displayedMarkers.push(result)
-            // }
-            // //manually added so no adjustement on percent coordinates
-            // else {
-            //     const myLeft : Number = value.left
-            //     const myTop : Number = value.top
-            //     const result : Marker = {
-            //         left : myLeft,
-            //         top: myTop
-            //     }
-            //     displayedMarkers.push(result)
-            // }
+            }
 
         })
         setDisplayedMarkers(displayedMarkers)
@@ -322,7 +323,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
     const onFinish = (values: any) => {
         let newDetails: ImageDetail[] = []
         values.items.forEach(
-            (value: any, index: number) => {
+            (value: any) => {
                 console.log(value)
                 newDetails.push({
                     id: undefined as unknown as number, name: value.name,
@@ -460,7 +461,7 @@ const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, o
                                   onFinish={onFinish} autoComplete="off"
                             >
                                 <Form.List name="items" initialValue={newImageDetails}>
-                                    {(fields, {add, remove}) => (
+                                    {(fields) => (
                                         <>
                                             {fields.map((field) => (
 
@@ -696,7 +697,7 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                     src: 'saveSingleDocumentDetail',
                     onDone: {
                         target: 'loadingDocumentDetails',
-                        actions: assign((context, event) => {
+                        actions: assign((context, _) => {
                             return {
                                 ...context,
                                 currentDetailForMoving: undefined as unknown as ImageDetail
@@ -739,14 +740,14 @@ const createTagImageMachine = (docId: number) => Machine<TagImageMachineContext,
                 if (event.type === 'SAVE')
                     return axios.post(`http://${process.env.REACT_APP_SERVER_NAME}/document/${docId}/detail`,
                         event.payload.documentDetails, {headers: {'Authorization': `Bearer ${token}`}})
-                return Promise.reject(() => "incorect type of event")
+                return Promise.reject(() => "incorrect type of event")
             },
             saveSingleDocumentDetail: (id, event) => {
                 const token = JSON.parse(window.localStorage.getItem("jwt") ?? '')
                 if (event.type === 'DO_MOVE')
                     return axios.post(`http://${process.env.REACT_APP_SERVER_NAME}/document/${docId}/detail`,
                         [event.payload.documentDetail], {headers: {'Authorization': `Bearer ${token}`}})
-                return Promise.reject(() => "incorect type of event")
+                return Promise.reject(() => "incorrect type of event")
             }
         }
     }
