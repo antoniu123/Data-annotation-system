@@ -59,11 +59,16 @@ const Dashboard: React.VFC = () => {
                       {documentState.context.documents
                         .filter(doc => doc.documentType === 'image/jpeg' || doc.documentType === 'image/png' )
                         .sort((a,b)=>a.id-b.id)
-                        .map((document, index) => (                        
-                          <Col key={index} xs={{ span: 6, offset: 1 }} lg={{ span: 4, offset: 2 }}>
-                            <ImageCard key={index} id={document.id} title={document.name} urlImage={urlImage(document.id)} refresh={()=>send({type: 'RETRY'})}/>
-                          </Col>                        
-                      ))}
+                        .map((document, index) => {
+                            const getTitle = document.name + '/' + document.fileName?.substr(0, document.fileName.lastIndexOf('.'));
+                            return (
+                                <Col key={index} xs={{span: 6, offset: 1}} lg={{span: 4, offset: 2}}>
+                                    <ImageCard key={index} id={document.id}
+                                               title={getTitle}
+                                               urlImage={urlImage(document.id)} refresh={() => send({type: 'RETRY'})}/>
+                                </Col>
+                            );
+                        })}
                      </Row>
                   </div>                 
                 </section>

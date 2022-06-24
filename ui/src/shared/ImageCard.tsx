@@ -1,5 +1,5 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import {useEffect, useRef, useState} from "react";
 import { BsTag } from "react-icons/bs";
 import '../css/card.css'
 import TagImage from "./TagImage"
@@ -11,9 +11,18 @@ interface ImageCardProps {
     refresh: ()=> void
 }
 const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage , refresh}) => {
-    const [tagsVisible, setTagsVisible] = useState(false)   
+    const [tagsVisible, setTagsVisible] = useState(false)
+
+    const myHeight = useRef<number>(undefined as unknown as number)
+    const myWidth = useRef<number>(undefined as unknown as number)
 
     const [cnt, setCnt] = useState(0)
+
+    const onImgLoad = (x:any) => {
+        const { naturalHeight, naturalWidth } = x.currentTarget;
+        myHeight.current = naturalHeight
+        myWidth.current = naturalWidth
+    };
 
     useEffect(() => {
         const textUrl = `http://${process.env.REACT_APP_SERVER_NAME}/document/${id}/count`
@@ -35,7 +44,7 @@ const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage , refresh})
         <div className="wrapper wrapperAnime">
           <div className="header">
             <div className="imageWrapper">
-              <img src={urlImage} className="image" alt="" />
+              <img onLoad={onImgLoad} src={urlImage} className="image" alt="" />
             </div>
             <div className="badgeWrapper">
               <div
@@ -59,7 +68,10 @@ const ImageCard : React.VFC<ImageCardProps> = ({ id, title, urlImage , refresh})
            onRefresh={(cnt:number)=> {
                setCnt(cnt)
                refresh()
-           }}/> : null}
+           }}
+           width={myWidth.current}
+           heigth={myHeight.current}
+        /> : null}
       </>
     );
   };

@@ -23,12 +23,20 @@ interface TagImageProps {
     visible: boolean
     onClose: () => void
     onRefresh: (cnt: number) => void
+    width?: number
+    heigth?: number
 }
 
-const TagImage: React.FC<TagImageProps> = ({docId, urlImage, visible, onClose, onRefresh}) => {
+const TagImage: React.FC<TagImageProps> = ({docId,
+                                               urlImage,
+                                               visible,
+                                               onClose,
+                                               onRefresh,
+                                               width,
+                                               heigth}) => {
 
-    const GLOBAL_WIDTH = 1920;
-    const GLOBAL_HEIGHT = 1080;
+    const GLOBAL_WIDTH = width ?? 1920;
+    const GLOBAL_HEIGHT = heigth ?? 1080;
 
     const selectorName: string[] = ["1-SpineBase", "2-SpineMid", "3-Neck", "4-Head", "5-ShoulderLeft",
         "6-ElbowLeft", "7-WristLeft", "8-HandLeft", "9-ShoulderRight", "10-ElbowRight",

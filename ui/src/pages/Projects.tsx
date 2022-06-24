@@ -136,10 +136,12 @@ const Projects: React.VFC = () => {
             dataIndex: 'document',
             key: 'document',
             sorter: (a: ProjectDetail, b: ProjectDetail) => a.document.id - b.document.id,
-            render: (value: File) => <ImageCard key={value.id} id={value.id} title={value.name}
+            render: (value: File) => {
+                const getTitle = value.name + '/' + value.fileName?.substr(0, value.fileName.lastIndexOf('.'));
+                return <ImageCard key={value.id} id={value.id} title={getTitle}
                                                 urlImage={url(value.id)} refresh={()=>send({
                 type: 'RETRY'
-            })}/>,
+            })}/>},
             width: '20px'
         },
         {
